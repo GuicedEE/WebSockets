@@ -11,7 +11,7 @@
     <artifactId>jwebmp-websockets</artifactId>
     <packaging>jar</packaging>
 
-    <name>Log Master</name>
+    <name>JWebMP WebSockets</name>
     <description>Provides Asynchronous and Dynamic Log Handler support for JDK1.8 logging API.
         Access via LogFactory.
     </description>
