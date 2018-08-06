@@ -17,6 +17,7 @@ module com.jwebmp.websockets {
 	requires com.jwebmp.guicedinjection;
 	requires com.jwebmp.core;
 	requires com.fasterxml.jackson.annotation;
+	requires javax.servlet.api;
 	exports com.jwebmp.websockets;
 	exports com.jwebmp.websockets.services;
 
