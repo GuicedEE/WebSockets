@@ -10,10 +10,7 @@ import com.jwebmp.websockets.services.IWebSocketSessionProvider;
 import javax.servlet.http.HttpSession;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,14 +18,11 @@ import java.util.logging.Logger;
 @ServerEndpoint("/")
 public class JWebMPSocket
 {
-	private static final Logger log = LogFactory.getLog("JWebMPWebSocket");
-
-	private static final Map<String, Set<Session>> groupedSessions = new ConcurrentHashMap<>(5, 2, 1);
-	private static final Map<Session, String> webSocketSessionBindings = new ConcurrentHashMap<>(5, 2, 1);
-
 	@SuppressWarnings("WeakerAccess")
 	public static final String EveryoneGroup = "Everyone";
-
+	private static final Logger log = LogFactory.getLog("JWebMPWebSocket");
+	private static final Map<String, Set<Session>> groupedSessions = new ConcurrentHashMap<>(5, 2, 1);
+	private static final Map<Session, String> webSocketSessionBindings = new ConcurrentHashMap<>(5, 2, 1);
 	private static final ServiceLoader<IWebSocketService> services = ServiceLoader.load(IWebSocketService.class);
 	private static final ServiceLoader<IWebSocketSessionProvider> sessionProviders = ServiceLoader.load(IWebSocketSessionProvider.class);
 
@@ -37,56 +31,86 @@ public class JWebMPSocket
 		//No Config Required
 	}
 
-	public static void addToGroup(String groupName, Session session)
-	{
-		getGroup(groupName).add(session);
-	}
-
 	public static void removeFromGroup(String groupName, Session session)
 	{
-		getGroup(groupName).remove(session);
-	}
-
-	public static void remove(Session session)
-	{
-		groupedSessions.forEach((key, value) ->
-				                        value.removeIf(a -> a.equals(session)));
-		webSocketSessionBindings.remove(session);
-	}
-
-	public static void remove(String id)
-	{
-		groupedSessions.forEach((key, value) ->
-				                        value.removeIf(a -> a.getId()
-				                                             .equals(id)));
-		webSocketSessionBindings.forEach((key, value) -> value.equals(id));
+		JWebMPSocket.getGroup(groupName)
+		            .remove(session);
 	}
 
 	public static Set<Session> getGroup(String groupName)
 	{
-		groupedSessions.computeIfAbsent(groupName, k -> new HashSet<>());
-		return groupedSessions.get(groupName);
+		JWebMPSocket.groupedSessions.computeIfAbsent(groupName, k -> new HashSet<>());
+		return JWebMPSocket.groupedSessions.get(groupName);
 	}
 
-	public static void broadcastMessage(String groupName, AjaxResponse message)
+	public static void remove(String id)
 	{
-		getGroup(groupName).forEach(a ->
-				                            a.getAsyncRemote()
-				                             .sendText(message.toString()));
+		JWebMPSocket.groupedSessions.forEach((key, value) ->
+				                                     value.removeIf(a -> a.getId()
+				                                                          .equals(id)));
+		for (Iterator<Map.Entry<Session, String>> iterator = JWebMPSocket.webSocketSessionBindings.entrySet()
+		                                                                                          .iterator(); iterator.hasNext(); )
+		{
+			Map.Entry<Session, String> entry = iterator.next();
+			Session key = entry.getKey();
+			String value = entry.getValue();
+			if (value.equals(id))
+			{
+				iterator.remove();
+			}
+		}
+	}
+
+	/**
+	 * Returns a session if valid that is linked to this session
+	 *
+	 * @param id
+	 *
+	 * @return
+	 */
+	public static HttpSession getLinkedSession(String id)
+	{
+		for (IWebSocketSessionProvider sessionProvider : JWebMPSocket.sessionProviders)
+		{
+			HttpSession session = sessionProvider.getSession(id);
+			if (session != null)
+			{
+				return session;
+			}
+		}
+		return null;
 	}
 
 	@OnOpen
 	public void onOpen(Session session)
 	{
-		addToGroup(EveryoneGroup, session);
-		services.forEach(a -> a.onOpen(session, this));
+		JWebMPSocket.addToGroup(JWebMPSocket.EveryoneGroup, session);
+		JWebMPSocket.services.forEach(a -> a.onOpen(session, this));
+	}
+
+	public static void addToGroup(String groupName, Session session)
+	{
+		JWebMPSocket.getGroup(groupName)
+		            .add(session);
 	}
 
 	@OnClose
 	public void onClose(Session session)
 	{
-		remove(session);
-		services.forEach(a -> a.onClose(session, this));
+		JWebMPSocket.remove(session);
+		JWebMPSocket.services.forEach(a -> a.onClose(session, this));
+	}
+
+	public static void remove(Session session)
+	{
+		for (Map.Entry<String, Set<Session>> entry : JWebMPSocket.groupedSessions.entrySet())
+		{
+			String key = entry.getKey();
+			Set<Session> value = entry.getValue();
+			value.removeIf(session1 -> session.getId()
+			                                  .equals(session1.getId()));
+		}
+		JWebMPSocket.webSocketSessionBindings.remove(session);
 	}
 
 	@OnMessage
@@ -98,54 +122,45 @@ public class JWebMPSocket
 			if (messageReceived.getData()
 			                   .get("sessionid") != null)
 			{
-				getWebSocketSessionBindings().put(session, messageReceived.getData()
-				                                                          .get("sessionid"));
+				JWebMPSocket.getWebSocketSessionBindings()
+				            .put(session, messageReceived.getData()
+				                                         .get("sessionid"));
 			}
-			log.log(Level.FINE, "Message Received - " + session.getId() + " Message=" + messageReceived);
-			services.forEach(a -> a.onMessage(message, session, messageReceived, this));
+			JWebMPSocket.log.log(Level.FINE, "Message Received - " + session.getId() + " Message=" + messageReceived);
+			JWebMPSocket.services.forEach(a -> a.onMessage(message, session, messageReceived, this));
 		}
 		catch (Exception e)
 		{
-			log.log(Level.SEVERE, "ERROR Message Received - " + session.getId() + " Message=" + message, e);
+			JWebMPSocket.log.log(Level.SEVERE, "ERROR Message Received - " + session.getId() + " Message=" + message, e);
 		}
 
 		try
 		{
-			broadcastMessage("Everyone", new AjaxResponse());
+			JWebMPSocket.broadcastMessage("Everyone", new AjaxResponse());
 		}
 		catch (Exception e)
 		{
-			log.log(Level.SEVERE, "ERROR Message Received - " + session.getId() + " Message=" + message, e);
+			JWebMPSocket.log.log(Level.SEVERE, "ERROR Message Received - " + session.getId() + " Message=" + message, e);
 		}
+	}
+
+	public static Map<Session, String> getWebSocketSessionBindings()
+	{
+		return JWebMPSocket.webSocketSessionBindings;
+	}
+
+	public static void broadcastMessage(String groupName, AjaxResponse message)
+	{
+		JWebMPSocket.getGroup(groupName)
+		            .forEach(a ->
+				                     a.getAsyncRemote()
+				                      .sendText(message.toString()));
 	}
 
 	@OnError
 	public void onError(Throwable t)
 	{
-		log.log(Level.SEVERE, "Error occurred in WebSocket", t);
-		services.forEach(a -> a.onError(t, this));
-	}
-
-	public static Map<Session, String> getWebSocketSessionBindings()
-	{
-		return webSocketSessionBindings;
-	}
-
-	/**
-	 * Returns a session if valid that is linked to this session
-	 * @param id
-	 * @return
-	 */
-	public static HttpSession getLinkedSession(String id)
-	{
-		for (IWebSocketSessionProvider sessionProvider : sessionProviders)
-		{
-			HttpSession session = sessionProvider.getSession(id);
-			if (session != null)
-			{
-				return session;
-			}
-		}
-		return null;
+		JWebMPSocket.log.log(Level.SEVERE, "Error occurred in WebSocket", t);
+		JWebMPSocket.services.forEach(a -> a.onError(t, this));
 	}
 }
