@@ -107,8 +107,16 @@ public class JWebMPSocket
 		{
 			String key = entry.getKey();
 			Set<Session> value = entry.getValue();
-			value.removeIf(session1 -> session.getId()
-			                                  .equals(session1.getId()));
+			//noinspection Java8CollectionRemoveIf
+			for (Iterator<Session> iterator = value.iterator(); iterator.hasNext(); )
+			{
+				Session session1 = iterator.next();
+				if (session.getId()
+				           .equals(session1.getId()))
+				{
+					iterator.remove();
+				}
+			}
 		}
 		JWebMPSocket.webSocketSessionBindings.remove(session);
 	}
