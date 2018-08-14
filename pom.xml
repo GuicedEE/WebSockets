@@ -4,7 +4,7 @@
 
     <parent>
         <groupId>com.jwebmp</groupId>
-        <artifactId>jwebmp-bom</artifactId>
+        <artifactId>jwebmp-parent</artifactId>
         <version>0.0.0_0-SNAPSHOT</version>
     </parent>
 
@@ -70,12 +70,12 @@
             <artifactId>javax.websocket-api</artifactId>
         </dependency>
 
-         <dependency>
-              <groupId>javax.websocket</groupId>
-              <artifactId>javax.websocket-client-api</artifactId>
-              <version>1.0</version>
-             <scope>test</scope>
-          </dependency>
+        <dependency>
+            <groupId>javax.websocket</groupId>
+            <artifactId>javax.websocket-client-api</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>javax.validation</groupId>
@@ -103,8 +103,6 @@
             <artifactId>mockito-core</artifactId>
         </dependency>
     </dependencies>
-
-
 
 
     <scm>
