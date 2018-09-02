@@ -12,6 +12,7 @@ import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +24,7 @@ public class JWebMPSocket
 	private static final Logger log = LogFactory.getLog("JWebMPWebSocket");
 	private static final Map<String, Set<Session>> groupedSessions = new ConcurrentHashMap<>(5, 2, 1);
 	private static final Map<Session, String> webSocketSessionBindings = new ConcurrentHashMap<>(5, 2, 1);
+
 	private static final ServiceLoader<IWebSocketService> services = ServiceLoader.load(IWebSocketService.class);
 	private static final ServiceLoader<IWebSocketSessionProvider> sessionProviders = ServiceLoader.load(IWebSocketSessionProvider.class);
 
@@ -39,7 +41,7 @@ public class JWebMPSocket
 
 	public static Set<Session> getGroup(String groupName)
 	{
-		JWebMPSocket.groupedSessions.computeIfAbsent(groupName, k -> new HashSet<>());
+		JWebMPSocket.groupedSessions.computeIfAbsent(groupName, k -> new CopyOnWriteArraySet<>());
 		return JWebMPSocket.groupedSessions.get(groupName);
 	}
 
@@ -105,16 +107,15 @@ public class JWebMPSocket
 	{
 		for (Map.Entry<String, Set<Session>> entry : JWebMPSocket.groupedSessions.entrySet())
 		{
-			String key = entry.getKey();
-			Set<Session> value = entry.getValue();
-			//noinspection Java8CollectionRemoveIf
-			for (Iterator<Session> iterator = value.iterator(); iterator.hasNext(); )
+			List<Session> value = new ArrayList<>(entry.getValue());
+			for (int i = 0; i < value.size(); i++)
 			{
-				Session session1 = iterator.next();
-				if (session.getId()
-				           .equals(session1.getId()))
+				if (value.get(i)
+				         .getId()
+				         .equals(session.getId()))
 				{
-					iterator.remove();
+					value.remove(i);
+					break;
 				}
 			}
 		}
