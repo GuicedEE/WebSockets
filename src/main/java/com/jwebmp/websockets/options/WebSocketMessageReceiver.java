@@ -60,7 +60,8 @@ public class WebSocketMessageReceiver<J extends WebSocketMessageReceiver<J>>
 	}
 
 	@JsonAnySetter
-	public void add(String key, String value) {
+	public void add(String key, String value)
+	{
 		data.put(key, value);
 	}
 }

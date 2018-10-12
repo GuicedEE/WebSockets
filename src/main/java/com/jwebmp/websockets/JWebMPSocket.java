@@ -135,7 +135,7 @@ public class JWebMPSocket
 				            .put(session, messageReceived.getData()
 				                                         .get("sessionid"));
 			}
-			JWebMPSocket.log.log(Level.FINE, "Message Received - " + session.getId() + " Message=" + messageReceived.toString(true));
+			JWebMPSocket.log.log(Level.FINE, "Message Received - " + session.getId() + " Message=" + messageReceived.toString());
 			JWebMPSocket.services.forEach(a -> a.onMessage(message, session, messageReceived, this));
 		}
 		catch (Exception e)
