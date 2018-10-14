@@ -21,7 +21,9 @@ public class JWebMPSocket
 {
 	@SuppressWarnings("WeakerAccess")
 	public static final String EveryoneGroup = "Everyone";
+
 	private static final Logger log = LogFactory.getLog("JWebMPWebSocket");
+
 	private static final Map<String, Set<Session>> groupedSessions = new ConcurrentHashMap<>(5, 2, 1);
 	private static final Map<Session, String> webSocketSessionBindings = new ConcurrentHashMap<>(5, 2, 1);
 
