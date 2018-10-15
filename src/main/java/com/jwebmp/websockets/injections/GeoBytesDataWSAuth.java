@@ -3,8 +3,9 @@ package com.jwebmp.websockets.injections;
 import com.jwebmp.websockets.services.IWebSocketAuthDataProvider;
 
 public class GeoBytesDataWSAuth
-		implements IWebSocketAuthDataProvider
+		implements IWebSocketAuthDataProvider<GeoBytesDataWSAuth>
 {
+	@Override
 	public StringBuilder getJavascriptToPopulate()
 	{
 		return new StringBuilder(" $.getJSON('http://gd.geobytes.com/GetCityDetails?callback=?', function(data) {\n" +
@@ -13,6 +14,7 @@ public class GeoBytesDataWSAuth
 		                         "    });");
 	}
 
+	@Override
 	public String name()
 	{
 		return "JWebMPGeoBytesAuthData";

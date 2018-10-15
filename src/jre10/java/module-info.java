@@ -11,6 +11,7 @@ module com.jwebmp.websockets {
 	uses com.jwebmp.websockets.services.IWebSocketSessionProvider;
 	uses com.jwebmp.websockets.services.IWebSocketService;
 
+
 	requires javax.websocket.api;
 	requires java.logging;
 	requires com.jwebmp.logmaster;

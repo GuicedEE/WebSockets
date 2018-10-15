@@ -2,7 +2,8 @@ package com.jwebmp.websockets.injections;
 
 import com.jwebmp.websockets.services.IWebSocketAuthDataProvider;
 
-public class LocalStorageKeyWSAuth implements IWebSocketAuthDataProvider
+public class LocalStorageKeyWSAuth
+		implements IWebSocketAuthDataProvider<LocalStorageKeyWSAuth>
 {
 	@Override
 	public StringBuilder getJavascriptToPopulate()

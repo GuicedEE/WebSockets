@@ -18,8 +18,9 @@ package com.jwebmp.websockets.injections;
 
 import com.jwebmp.core.FileTemplates;
 import com.jwebmp.core.base.angular.services.IAngularControllerScopeStatement;
-import com.jwebmp.websockets.services.IWebSocketPreConfiguration;
+import com.jwebmp.guicedinjection.GuiceContext;
 import com.jwebmp.websockets.services.IWebSocketAuthDataProvider;
+import com.jwebmp.websockets.services.IWebSocketPreConfiguration;
 
 import java.util.ServiceLoader;
 
@@ -33,8 +34,6 @@ import java.util.ServiceLoader;
 public class WebSocketControllerStatement
 		implements IAngularControllerScopeStatement<WebSocketControllerStatement>
 {
-	private static final ServiceLoader<IWebSocketAuthDataProvider> authDataProviders = ServiceLoader.load(IWebSocketAuthDataProvider.class);
-
 	public WebSocketControllerStatement()
 	{
 		//No config Required
@@ -45,7 +44,8 @@ public class WebSocketControllerStatement
 	{
 		StringBuilder template = FileTemplates.getFileTemplate(IWebSocketPreConfiguration.class, "JW_SCOPE_INSERTIONS", "websockets.js");
 		StringBuilder replaceable = new StringBuilder();
-		for (IWebSocketAuthDataProvider a : authDataProviders)
+		for (IWebSocketAuthDataProvider a : GuiceContext.instance()
+		                                                .getLoader(IWebSocketAuthDataProvider.class, ServiceLoader.load(IWebSocketAuthDataProvider.class)))
 		{
 			replaceable.append("jw.websocket.authdataproviders.push({name:'" + a.name() + "',");
 			replaceable.append("data:" + a.getJavascriptToPopulate() + "});");
