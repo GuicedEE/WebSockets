@@ -11,25 +11,20 @@ module com.jwebmp.websockets {
 	uses com.jwebmp.websockets.services.IWebSocketSessionProvider;
 	uses com.jwebmp.websockets.services.IWebSocketService;
 
+	requires transitive javax.websocket.api;
 
-	requires javax.websocket.api;
-	requires java.logging;
-	requires com.jwebmp.logmaster;
-	requires com.jwebmp.guicedinjection;
-	requires com.jwebmp.core;
-	requires com.fasterxml.jackson.annotation;
-	requires javax.servlet.api;
+	requires transitive com.jwebmp.core;
+
 	exports com.jwebmp.websockets;
 	exports com.jwebmp.websockets.services;
 
-	exports com.jwebmp.websockets.injections to com.jwebmp.guicedinjection, com.google.guice;
+
+	exports com.jwebmp.websockets.injections to com.google.guice;
 
 	provides IGuicePreStartup with WebSocketsConfiguration;
 	provides IAngularControllerScopeStatement with WebSocketControllerStatement;
 	provides IWebSocketAuthDataProvider with LocalStorageKeyWSAuth;
 
-	opens com.jwebmp.websockets;
-	opens com.jwebmp.websockets.services;
-
+	opens com.jwebmp.websockets.services to com.google.guice, com.jwebmp.core;
 	opens com.jwebmp.websockets.options to com.fasterxml.jackson.databind;
 }
