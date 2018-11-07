@@ -66,4 +66,10 @@ public class WebSocketControllerStatement
 	{
 		return null;
 	}
+
+	@Override
+	public boolean enabled()
+	{
+		return true;
+	}
 }
