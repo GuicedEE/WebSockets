@@ -22,6 +22,7 @@ module com.jwebmp.websockets {
 	requires com.fasterxml.jackson.annotation;
 	requires javax.servlet.api;
 	requires java.validation;
+	requires com.jwebmp.core.angularjs;
 
 	exports com.jwebmp.websockets;
 	exports com.jwebmp.websockets.services;
