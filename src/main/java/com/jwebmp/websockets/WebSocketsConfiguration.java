@@ -1,4 +1,4 @@
-package com.jwebmp.websockets.injections;
+package com.jwebmp.websockets;
 
 import com.jwebmp.guicedinjection.GuiceContext;
 import com.jwebmp.guicedinjection.interfaces.IGuicePreStartup;
@@ -19,6 +19,7 @@ public class WebSocketsConfiguration
 	 * Enables the local storage values to come in
 	 */
 	private static boolean localStorageEnabled;
+
 
 	/**
 	 * Getter for property 'geoBytesEnabled'.

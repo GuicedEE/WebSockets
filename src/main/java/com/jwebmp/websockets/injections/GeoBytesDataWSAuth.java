@@ -1,5 +1,6 @@
 package com.jwebmp.websockets.injections;
 
+import com.jwebmp.websockets.WebSocketsConfiguration;
 import com.jwebmp.websockets.services.IWebSocketAuthDataProvider;
 
 public class GeoBytesDataWSAuth
