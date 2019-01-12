@@ -16,4 +16,10 @@ public class LocalStorageKeyWSAuth
 	{
 		return "jwamsmk";
 	}
+
+	@Override
+	public boolean enabled()
+	{
+		return WebSocketsConfiguration.isLocalStorageEnabled();
+	}
 }

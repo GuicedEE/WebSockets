@@ -19,4 +19,10 @@ public class GeoBytesDataWSAuth
 	{
 		return "JWebMPGeoBytesAuthData";
 	}
+
+	@Override
+	public boolean enabled()
+	{
+		return WebSocketsConfiguration.isGeoBytesEnabled();
+	}
 }

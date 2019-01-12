@@ -12,8 +12,7 @@
     <packaging>jar</packaging>
 
     <name>JWebMP WebSockets</name>
-    <description>Provides Asynchronous and Dynamic Log Handler support for JDK1.8 logging API.
-        Access via LogFactory.
+    <description>Provides a WebSocket implementation using JSR356 for JWebMP
     </description>
     <url>https://github.com/GedMarc/LogMaster</url>
 

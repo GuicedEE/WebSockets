@@ -47,6 +47,10 @@ public class WebSocketControllerStatement
 		for (IWebSocketAuthDataProvider a : GuiceContext.instance()
 		                                                .getLoader(IWebSocketAuthDataProvider.class, ServiceLoader.load(IWebSocketAuthDataProvider.class)))
 		{
+			if (!a.enabled())
+			{
+				continue;
+			}
 			replaceable.append("jw.websocket.authdataproviders.push({name:'" + a.name() + "',");
 			replaceable.append("data:" + a.getJavascriptToPopulate() + "});");
 		}
