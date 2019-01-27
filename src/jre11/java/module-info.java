@@ -1,13 +1,3 @@
-import com.jwebmp.core.base.angular.services.IAngularControllerScopeStatement;
-import com.jwebmp.guicedinjection.interfaces.IGuicePreStartup;
-import com.jwebmp.guicedinjection.interfaces.IGuiceScanJarExclusions;
-import com.jwebmp.guicedinjection.interfaces.IGuiceScanModuleExclusions;
-import com.jwebmp.websockets.WebSocketsConfiguration;
-import com.jwebmp.websockets.injections.LocalStorageKeyWSAuth;
-import com.jwebmp.websockets.injections.WebSocketControllerStatement;
-import com.jwebmp.websockets.injections.WebSocketModuleExclusions;
-import com.jwebmp.websockets.services.IWebSocketAuthDataProvider;
-
 module com.jwebmp.websockets {
 	uses com.jwebmp.websockets.services.IWebSocketAuthDataProvider;
 	uses com.jwebmp.websockets.services.IWebSocketPreConfiguration;
@@ -29,12 +19,12 @@ module com.jwebmp.websockets {
 
 	exports com.jwebmp.websockets.injections to com.jwebmp.guicedinjection, com.google.guice;
 
-	provides IGuicePreStartup with WebSocketsConfiguration;
-	provides IAngularControllerScopeStatement with WebSocketControllerStatement;
-	provides IWebSocketAuthDataProvider with LocalStorageKeyWSAuth;
+	provides com.jwebmp.guicedinjection.interfaces.IGuicePreStartup with com.jwebmp.websockets.WebSocketsConfiguration;
+	provides com.jwebmp.core.base.angular.services.IAngularControllerScopeStatement with com.jwebmp.websockets.injections.WebSocketControllerStatement;
+	provides com.jwebmp.websockets.services.IWebSocketAuthDataProvider with com.jwebmp.websockets.injections.LocalStorageKeyWSAuth;
 
-	provides IGuiceScanModuleExclusions with WebSocketModuleExclusions;
-	provides IGuiceScanJarExclusions with WebSocketModuleExclusions;
+	provides com.jwebmp.guicedinjection.interfaces.IGuiceScanModuleExclusions with com.jwebmp.websockets.injections.WebSocketModuleExclusions;
+	provides com.jwebmp.guicedinjection.interfaces.IGuiceScanJarExclusions with com.jwebmp.websockets.injections.WebSocketModuleExclusions;
 
 	opens com.jwebmp.websockets;
 	opens com.jwebmp.websockets.services;
