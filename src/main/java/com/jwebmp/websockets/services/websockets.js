@@ -47,7 +47,11 @@ jw.websocket.connection.onopen = function (e) {
 };
 
 jw.websocket.connection.onclose = function (e) {
-    console.log('on close ' + e.data);
+    if(e !== undefined)
+        console.log('on close ' + e.data);
+    else
+        console.log('on close - No Data Object');
+
     jw.websocket.connected = false;
 };
 
