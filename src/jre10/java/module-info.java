@@ -3,7 +3,6 @@ import com.jwebmp.guicedinjection.interfaces.IGuicePreStartup;
 import com.jwebmp.guicedinjection.interfaces.IGuiceScanJarExclusions;
 import com.jwebmp.guicedinjection.interfaces.IGuiceScanModuleExclusions;
 import com.jwebmp.websockets.injections.LocalStorageKeyWSAuth;
-import com.jwebmp.websockets.injections.WebSocketControllerStatement;
 import com.jwebmp.websockets.injections.WebSocketModuleExclusions;
 import com.jwebmp.websockets.injections.WebSocketsConfiguration;
 import com.jwebmp.websockets.services.IWebSocketAuthDataProvider;

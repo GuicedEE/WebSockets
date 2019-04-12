@@ -1,7 +1,7 @@
 package com.jwebmp.websockets;
 
-import com.jwebmp.core.base.ajax.AjaxResponse;
-import com.jwebmp.core.htmlbuilder.javascript.JavaScriptPart;
+//import com.jwebmp.core.base.ajax.AjaxResponse;
+//import com.jwebmp.core.htmlbuilder.javascript.JavaScriptPart;
 import com.jwebmp.guicedinjection.GuiceContext;
 import com.jwebmp.logger.LogFactory;
 import com.jwebmp.websockets.options.WebSocketMessageReceiver;
@@ -130,7 +130,7 @@ public class JWebMPSocket
 	@OnMessage
 	public void onMessage(String message, Session session)
 	{
-		try
+		/*try
 		{
 			WebSocketMessageReceiver<?> messageReceived = new JavaScriptPart<>().From(message, WebSocketMessageReceiver.class);
 			if (messageReceived.getData()
@@ -157,13 +157,14 @@ public class JWebMPSocket
 		catch (Exception e)
 		{
 			JWebMPSocket.log.log(Level.SEVERE, "ERROR Message Received - " + session.getId() + " Message=" + message, e);
-		}
+		}*/
 	}
 
 	public static Map<Session, String> getWebSocketSessionBindings()
 	{
 		return JWebMPSocket.webSocketSessionBindings;
 	}
+/*
 
 	public static void broadcastMessage(String groupName, AjaxResponse message)
 	{
@@ -172,6 +173,7 @@ public class JWebMPSocket
 				                     a.getAsyncRemote()
 				                      .sendText(message.toString()));
 	}
+*/
 
 	@OnError
 	public void onError(Throwable t)
