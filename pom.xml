@@ -20,31 +20,37 @@
         <dependency>
             <groupId>com.jwebmp.guicedee</groupId>
             <artifactId>guiced-injection</artifactId>
+            <type>jar</type>
         </dependency>
 
         <dependency>
             <groupId>com.jwebmp.guicedee</groupId>
             <artifactId>guiced-log-master</artifactId>
+            <type>jar</type>
         </dependency>
 
         <dependency>
             <groupId>com.jwebmp.guicedee.servlets</groupId>
             <artifactId>guiced-servlets</artifactId>
+            <type>jar</type>
         </dependency>
 
         <dependency>
             <groupId>com.jwebmp.jpms.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+            <type>jar</type>
         </dependency>
 
         <dependency>
             <groupId>javax.websocket</groupId>
             <artifactId>javax.websocket-api</artifactId>
+            <type>jar</type>
         </dependency>
 
         <dependency>
             <groupId>javax.websocket</groupId>
             <artifactId>javax.websocket-client-api</artifactId>
+            <type>jar</type>
             <scope>test</scope>
         </dependency>
 
