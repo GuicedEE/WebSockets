@@ -1,9 +1,9 @@
 package com.jwebmp.websockets;
 
-//import com.jwebmp.core.base.ajax.AjaxResponse;
-//import com.jwebmp.core.htmlbuilder.javascript.JavaScriptPart;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jwebmp.guicedinjection.GuiceContext;
 import com.jwebmp.logger.LogFactory;
+import com.jwebmp.websockets.options.WebSocketMessageReceiver;
 import com.jwebmp.websockets.services.IWebSocketService;
 import com.jwebmp.websockets.services.IWebSocketSessionProvider;
 
@@ -47,8 +47,8 @@ public class GuicedWebSocket
 	public static void remove(String id)
 	{
 		GuicedWebSocket.groupedSessions.forEach((key, value) ->
-				                                     value.removeIf(a -> a.getId()
-				                                                          .equals(id)));
+				                                        value.removeIf(a -> a.getId()
+				                                                             .equals(id)));
 		for (Iterator<Map.Entry<Session, String>> iterator = GuicedWebSocket.webSocketSessionBindings.entrySet()
 		                                                                                             .iterator(); iterator.hasNext(); )
 		{
@@ -129,15 +129,16 @@ public class GuicedWebSocket
 	@OnMessage
 	public void onMessage(String message, Session session)
 	{
-		/*try
+		try
 		{
-			WebSocketMessageReceiver<?> messageReceived = new JavaScriptPart<>().From(message, WebSocketMessageReceiver.class);
+			WebSocketMessageReceiver<?> messageReceived = GuiceContext.get(ObjectMapper.class)
+			                                                          .readValue(message, WebSocketMessageReceiver.class);
 			if (messageReceived.getData()
 			                   .get("sessionid") != null)
 			{
 				GuicedWebSocket.getWebSocketSessionBindings()
-				            .put(session, messageReceived.getData()
-				                                         .get("sessionid"));
+				               .put(session, messageReceived.getData()
+				                                            .get("sessionid"));
 			}
 			GuicedWebSocket.log.log(Level.FINE, "Message Received - " + session.getId() + " Message=" + messageReceived.toString());
 			GuiceContext.instance()
@@ -148,15 +149,6 @@ public class GuicedWebSocket
 		{
 			GuicedWebSocket.log.log(Level.SEVERE, "ERROR Message Received - " + session.getId() + " Message=" + message, e);
 		}
-
-		try
-		{
-			GuicedWebSocket.broadcastMessage("Everyone", new AjaxResponse());
-		}
-		catch (Exception e)
-		{
-			GuicedWebSocket.log.log(Level.SEVERE, "ERROR Message Received - " + session.getId() + " Message=" + message, e);
-		}*/
 	}
 
 	public static Map<Session, String> getWebSocketSessionBindings()

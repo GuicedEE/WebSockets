@@ -1,5 +1,5 @@
 module com.jwebmp.websockets {
-	uses com.jwebmp.websockets.services.IWebSocketAuthDataProvider;
+
 	uses com.jwebmp.websockets.services.IWebSocketPreConfiguration;
 	uses com.jwebmp.websockets.services.IWebSocketSessionProvider;
 	uses com.jwebmp.websockets.services.IWebSocketService;
@@ -16,6 +16,7 @@ module com.jwebmp.websockets {
 	requires javax.servlet.api;
 
 	requires java.validation;
+	requires com.fasterxml.jackson.databind;
 
 	exports com.jwebmp.websockets;
 	exports com.jwebmp.websockets.services;
@@ -23,11 +24,6 @@ module com.jwebmp.websockets {
 	exports com.jwebmp.websockets.injections to com.jwebmp.guicedinjection, com.google.guice;
 
 	provides com.jwebmp.guicedinjection.interfaces.IGuicePreStartup with com.jwebmp.websockets.WebSocketsConfiguration;
-
-	//TODO move this class higher up
-	//provides com.jwebmp.core.base.angular.services.IAngularControllerScopeStatement with com.jwebmp.websockets.injections.WebSocketControllerStatement;
-	provides com.jwebmp.websockets.services.IWebSocketAuthDataProvider with com.jwebmp.websockets.injections.LocalStorageKeyWSAuth;
-
 	provides com.jwebmp.guicedinjection.interfaces.IGuiceScanModuleExclusions with com.jwebmp.websockets.injections.WebSocketModuleExclusions;
 	provides com.jwebmp.guicedinjection.interfaces.IGuiceScanJarExclusions with com.jwebmp.websockets.injections.WebSocketModuleExclusions;
 

@@ -21,6 +21,7 @@ public class WebSocketMessageReceiver<J extends WebSocketMessageReceiver<J>>
 		//extends JavaScriptPart<J>
 {
 	private WebSocketMessageReceiverActionType action;
+	private String broadcastGroup;
 
 	private Map<String, String> data = new HashMap<>();
 
@@ -57,6 +58,17 @@ public class WebSocketMessageReceiver<J extends WebSocketMessageReceiver<J>>
 	{
 		this.data = data;
 		return (J) this;
+	}
+
+	public String getBroadcastGroup()
+	{
+		return broadcastGroup;
+	}
+
+	public WebSocketMessageReceiver<J> setBroadcastGroup(String broadcastGroup)
+	{
+		this.broadcastGroup = broadcastGroup;
+		return this;
 	}
 
 	@JsonAnySetter
