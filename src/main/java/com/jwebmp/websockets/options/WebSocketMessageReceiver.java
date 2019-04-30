@@ -22,7 +22,6 @@ public class WebSocketMessageReceiver<J extends WebSocketMessageReceiver<J>>
 {
 	private WebSocketMessageReceiverActionType action;
 	private String broadcastGroup;
-
 	private Map<String, String> data = new HashMap<>();
 
 	public WebSocketMessageReceiver()
