@@ -3,6 +3,7 @@ module com.jwebmp.websockets {
 	uses com.jwebmp.websockets.services.IWebSocketPreConfiguration;
 	uses com.jwebmp.websockets.services.IWebSocketSessionProvider;
 	uses com.jwebmp.websockets.services.IWebSocketService;
+	uses com.jwebmp.websockets.services.IWebSocketMessageReceiver;
 
 	requires javax.websocket.api;
 	requires java.logging;
@@ -19,6 +20,7 @@ module com.jwebmp.websockets {
 	requires com.fasterxml.jackson.databind;
 
 	exports com.jwebmp.websockets;
+	exports com.jwebmp.websockets.options;
 	exports com.jwebmp.websockets.services;
 
 	exports com.jwebmp.websockets.injections to com.jwebmp.guicedinjection, com.google.guice;

@@ -20,7 +20,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
 public class WebSocketMessageReceiver<J extends WebSocketMessageReceiver<J>>
 		//extends JavaScriptPart<J>
 {
-	private WebSocketMessageReceiverActionType action;
+	private String action;
 	private String broadcastGroup;
 	private Map<String, String> data = new HashMap<>();
 
@@ -29,19 +29,19 @@ public class WebSocketMessageReceiver<J extends WebSocketMessageReceiver<J>>
 		//No Config Required
 	}
 
-	public WebSocketMessageReceiver(WebSocketMessageReceiverActionType action, Map<String, String> data)
+	public WebSocketMessageReceiver(String action, Map<String, String> data)
 	{
 		this.action = action;
 		this.data = data;
 	}
 
-	public WebSocketMessageReceiverActionType getAction()
+	public String getAction()
 	{
 		return action;
 	}
 
 	@SuppressWarnings("unchecked")
-	public J setAction(WebSocketMessageReceiverActionType action)
+	public J setAction(String action)
 	{
 		this.action = action;
 		return (J) this;
@@ -74,5 +74,15 @@ public class WebSocketMessageReceiver<J extends WebSocketMessageReceiver<J>>
 	public void add(String key, String value)
 	{
 		data.put(key, value);
+	}
+
+	@Override
+	public String toString()
+	{
+		return "WebSocketMessageReceiver{" +
+		       "action=" + action +
+		       ", broadcastGroup='" + broadcastGroup + '\'' +
+		       ", data=" + data +
+		       '}';
 	}
 }

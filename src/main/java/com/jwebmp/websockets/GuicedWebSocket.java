@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jwebmp.guicedinjection.GuiceContext;
 import com.jwebmp.logger.LogFactory;
 import com.jwebmp.websockets.options.WebSocketMessageReceiver;
+import com.jwebmp.websockets.services.IWebSocketMessageReceiver;
 import com.jwebmp.websockets.services.IWebSocketService;
 import com.jwebmp.websockets.services.IWebSocketSessionProvider;
 
@@ -27,9 +28,27 @@ public class GuicedWebSocket
 	private static final Map<String, Set<Session>> groupedSessions = new ConcurrentHashMap<>(5, 2, 1);
 	private static final Map<Session, String> webSocketSessionBindings = new ConcurrentHashMap<>(5, 2, 1);
 
+	private static final Map<String, List<IWebSocketMessageReceiver>> messageListeners = new ConcurrentHashMap<>();
+
 	public GuicedWebSocket()
 	{
-		//No Config Required
+		Set<IWebSocketMessageReceiver> messageReceivers = GuiceContext.instance()
+		                                                              .getLoader(IWebSocketMessageReceiver.class, ServiceLoader.load(IWebSocketMessageReceiver.class));
+
+		for (IWebSocketMessageReceiver messageReceiver : messageReceivers)
+		{
+			for (String messageName : messageReceiver.messageNames())
+			{
+				if (!messageListeners.containsKey(messageName))
+				{
+					messageListeners.put(messageName, new ArrayList<>());
+				}
+				messageListeners.get(messageName)
+				                .add(messageReceiver);
+				log.log(Level.CONFIG, "Registered new IWebSocketReciever [" + messageReceiver.getClass()
+				                                                                             .getCanonicalName() + "]");
+			}
+		}
 	}
 
 	public static void removeFromGroup(String groupName, Session session)
@@ -144,6 +163,12 @@ public class GuicedWebSocket
 			GuiceContext.instance()
 			            .getLoader(IWebSocketService.class, ServiceLoader.load(IWebSocketService.class))
 			            .forEach(a -> a.onMessage(message, session, messageReceived, this));
+			Set<IWebSocketMessageReceiver> messageReceivers = GuiceContext.instance()
+			                                                              .getLoader(IWebSocketMessageReceiver.class, ServiceLoader.load(IWebSocketMessageReceiver.class));
+			for (IWebSocketMessageReceiver messageReceiver : messageReceivers)
+			{
+				messageReceiver.receiveMessage(messageReceived);
+			}
 		}
 		catch (Exception e)
 		{
@@ -155,16 +180,15 @@ public class GuicedWebSocket
 	{
 		return GuicedWebSocket.webSocketSessionBindings;
 	}
-/*
 
-	public static void broadcastMessage(String groupName, AjaxResponse message)
+
+	public static void broadcastMessage(String groupName, String message)
 	{
 		GuicedWebSocket.getGroup(groupName)
-		            .forEach(a ->
-				                     a.getAsyncRemote()
-				                      .sendText(message.toString()));
+		               .forEach(a ->
+				                        a.getAsyncRemote()
+				                         .sendText(message));
 	}
-*/
 
 	@OnError
 	public void onError(Throwable t)
