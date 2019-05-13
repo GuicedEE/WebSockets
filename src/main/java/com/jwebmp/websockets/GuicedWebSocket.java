@@ -26,8 +26,7 @@ public class GuicedWebSocket
 	private static final Logger log = LogFactory.getLog("JWebMPWebSocket");
 
 	private static final Map<String, Set<Session>> groupedSessions = new ConcurrentHashMap<>(5, 2, 1);
-	private static final Map<Session, String> webSocketSessionBindings = new ConcurrentHashMap<>(5, 2, 1);
-
+	private static final Map<String, Session> webSocketSessionBindings = new ConcurrentHashMap<>(5, 2, 1);
 	private static final Map<String, List<IWebSocketMessageReceiver>> messageListeners = new ConcurrentHashMap<>();
 
 	public GuicedWebSocket()
@@ -68,13 +67,13 @@ public class GuicedWebSocket
 		GuicedWebSocket.groupedSessions.forEach((key, value) ->
 				                                        value.removeIf(a -> a.getId()
 				                                                             .equals(id)));
-		for (Iterator<Map.Entry<Session, String>> iterator = GuicedWebSocket.webSocketSessionBindings.entrySet()
+
+		for (Iterator<Map.Entry<String, Session>> iterator = GuicedWebSocket.webSocketSessionBindings.entrySet()
 		                                                                                             .iterator(); iterator.hasNext(); )
 		{
-			Map.Entry<Session, String> entry = iterator.next();
-			Session key = entry.getKey();
-			String value = entry.getValue();
-			if (value.equals(id))
+			Map.Entry<String,Session> entry = iterator.next();
+			String key = entry.getKey();
+			if (key.equals(id))
 			{
 				iterator.remove();
 			}
@@ -141,8 +140,21 @@ public class GuicedWebSocket
 					break;
 				}
 			}
+			if (value.isEmpty())
+			{
+				groupedSessions.remove(entry.getKey());
+			}
 		}
-		GuicedWebSocket.webSocketSessionBindings.remove(session);
+		for (Iterator<Map.Entry<String, Session>> iterator = GuicedWebSocket.webSocketSessionBindings.entrySet()
+		                                                                                             .iterator(); iterator.hasNext(); )
+		{
+			Map.Entry<String, Session> entry = iterator.next();
+			Session value = entry.getValue();
+			if (value.equals(session))
+			{
+				iterator.remove();
+			}
+		}
 	}
 
 	@OnMessage
@@ -156,13 +168,16 @@ public class GuicedWebSocket
 			                   .get("sessionid") != null)
 			{
 				GuicedWebSocket.getWebSocketSessionBindings()
-				               .put(session, messageReceived.getData()
-				                                            .get("sessionid"));
+				               .put(messageReceived.getData()
+				                                            .get("sessionid"),session);
+				GuicedWebSocket.addToGroup(messageReceived.getData()
+				                                          .get("sessionid"), session);
 			}
-			GuicedWebSocket.log.log(Level.FINE, "Message Received - " + session.getId() + " Message=" + messageReceived.toString());
+			GuicedWebSocket.log.log(Level.FINER, "Web Socket Message Received - " + session.getId() + " Message=" + messageReceived.toString());
 			GuiceContext.instance()
 			            .getLoader(IWebSocketService.class, ServiceLoader.load(IWebSocketService.class))
 			            .forEach(a -> a.onMessage(message, session, messageReceived, this));
+
 			Set<IWebSocketMessageReceiver> messageReceivers = GuiceContext.instance()
 			                                                              .getLoader(IWebSocketMessageReceiver.class, ServiceLoader.load(IWebSocketMessageReceiver.class));
 			for (IWebSocketMessageReceiver messageReceiver : messageReceivers)
@@ -176,7 +191,7 @@ public class GuicedWebSocket
 		}
 	}
 
-	public static Map<Session, String> getWebSocketSessionBindings()
+	public static Map<String, Session> getWebSocketSessionBindings()
 	{
 		return GuicedWebSocket.webSocketSessionBindings;
 	}
