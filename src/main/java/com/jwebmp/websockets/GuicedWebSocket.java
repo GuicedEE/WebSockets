@@ -52,26 +52,26 @@ public class GuicedWebSocket
 
 	public static void removeFromGroup(String groupName, Session session)
 	{
-		GuicedWebSocket.getGroup(groupName)
-		               .remove(session);
+		getGroup(groupName)
+				.remove(session);
 	}
 
 	public static Set<Session> getGroup(String groupName)
 	{
-		GuicedWebSocket.groupedSessions.computeIfAbsent(groupName, k -> new CopyOnWriteArraySet<>());
-		return GuicedWebSocket.groupedSessions.get(groupName);
+		groupedSessions.computeIfAbsent(groupName, k -> new CopyOnWriteArraySet<>());
+		return groupedSessions.get(groupName);
 	}
 
 	public static void remove(String id)
 	{
-		GuicedWebSocket.groupedSessions.forEach((key, value) ->
-				                                        value.removeIf(a -> a.getId()
-				                                                             .equals(id)));
+		groupedSessions.forEach((key, value) ->
+				                        value.removeIf(a -> a.getId()
+				                                             .equals(id)));
 
-		for (Iterator<Map.Entry<String, Session>> iterator = GuicedWebSocket.webSocketSessionBindings.entrySet()
-		                                                                                             .iterator(); iterator.hasNext(); )
+		for (Iterator<Map.Entry<String, Session>> iterator = webSocketSessionBindings.entrySet()
+		                                                                             .iterator(); iterator.hasNext(); )
 		{
-			Map.Entry<String,Session> entry = iterator.next();
+			Map.Entry<String, Session> entry = iterator.next();
 			String key = entry.getKey();
 			if (key.equals(id))
 			{
@@ -104,7 +104,7 @@ public class GuicedWebSocket
 	@OnOpen
 	public void onOpen(Session session)
 	{
-		GuicedWebSocket.addToGroup(GuicedWebSocket.EveryoneGroup, session);
+		addToGroup(EveryoneGroup, session);
 		GuiceContext.instance()
 		            .getLoader(IWebSocketService.class, ServiceLoader.load(IWebSocketService.class))
 		            .forEach(a -> a.onOpen(session, this));
@@ -112,22 +112,23 @@ public class GuicedWebSocket
 
 	public static void addToGroup(String groupName, Session session)
 	{
-		GuicedWebSocket.getGroup(groupName)
-		               .add(session);
+		getGroup(groupName)
+				.add(session);
 	}
 
 	@OnClose
 	public void onClose(Session session)
 	{
-		GuicedWebSocket.remove(session);
+		remove(session);
 		GuiceContext.instance()
 		            .getLoader(IWebSocketService.class, ServiceLoader.load(IWebSocketService.class))
 		            .forEach(a -> a.onClose(session, this));
+		log.config("Removed web socket session -" + session);
 	}
 
 	public static void remove(Session session)
 	{
-		for (Map.Entry<String, Set<Session>> entry : GuicedWebSocket.groupedSessions.entrySet())
+		for (Map.Entry<String, Set<Session>> entry : groupedSessions.entrySet())
 		{
 			List<Session> value = new ArrayList<>(entry.getValue());
 			for (int i = 0; i < value.size(); i++)
@@ -145,8 +146,8 @@ public class GuicedWebSocket
 				groupedSessions.remove(entry.getKey());
 			}
 		}
-		for (Iterator<Map.Entry<String, Session>> iterator = GuicedWebSocket.webSocketSessionBindings.entrySet()
-		                                                                                             .iterator(); iterator.hasNext(); )
+		for (Iterator<Map.Entry<String, Session>> iterator = webSocketSessionBindings.entrySet()
+		                                                                             .iterator(); iterator.hasNext(); )
 		{
 			Map.Entry<String, Session> entry = iterator.next();
 			Session value = entry.getValue();
@@ -167,13 +168,13 @@ public class GuicedWebSocket
 			if (messageReceived.getData()
 			                   .get("sessionid") != null)
 			{
-				GuicedWebSocket.getWebSocketSessionBindings()
-				               .put(messageReceived.getData()
-				                                            .get("sessionid"),session);
-				GuicedWebSocket.addToGroup(messageReceived.getData()
-				                                          .get("sessionid"), session);
+				getWebSocketSessionBindings()
+						.put(messageReceived.getData()
+						                    .get("sessionid"), session);
+				addToGroup(messageReceived.getData()
+				                          .get("sessionid"), session);
 			}
-			GuicedWebSocket.log.log(Level.FINER, "Web Socket Message Received - " + session.getId() + " Message=" + messageReceived.toString());
+			log.log(Level.FINER, "Web Socket Message Received - " + session.getId() + " Message=" + messageReceived.toString());
 			GuiceContext.instance()
 			            .getLoader(IWebSocketService.class, ServiceLoader.load(IWebSocketService.class))
 			            .forEach(a -> a.onMessage(message, session, messageReceived, this));
@@ -187,30 +188,32 @@ public class GuicedWebSocket
 		}
 		catch (Exception e)
 		{
-			GuicedWebSocket.log.log(Level.SEVERE, "ERROR Message Received - " + session.getId() + " Message=" + message, e);
+			log.log(Level.SEVERE, "ERROR Message Received - " + session.getId() + " Message=" + message, e);
 		}
 	}
 
 	public static Map<String, Session> getWebSocketSessionBindings()
 	{
-		return GuicedWebSocket.webSocketSessionBindings;
+		return webSocketSessionBindings;
 	}
 
 
 	public static void broadcastMessage(String groupName, String message)
 	{
-		GuicedWebSocket.getGroup(groupName)
-		               .forEach(a ->
-				                        a.getAsyncRemote()
-				                         .sendText(message));
+		getGroup(groupName)
+				.forEach(a ->
+						         a.getAsyncRemote()
+						          .sendText(message));
 	}
 
 	@OnError
-	public void onError(Throwable t)
+	public void onError(Throwable t, Session session)
 	{
-		GuicedWebSocket.log.log(Level.SEVERE, "Error occurred in WebSocket", t);
+		log.log(Level.SEVERE, "Error occurred in WebSocket", t);
 		GuiceContext.instance()
 		            .getLoader(IWebSocketService.class, ServiceLoader.load(IWebSocketService.class))
 		            .forEach(a -> a.onError(t, this));
+		remove(session);
+		log.config("Removed web socket session -" + session);
 	}
 }
