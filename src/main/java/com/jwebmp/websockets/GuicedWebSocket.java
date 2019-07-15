@@ -108,6 +108,7 @@ public class GuicedWebSocket
 		GuiceContext.instance()
 		            .getLoader(IWebSocketService.class, ServiceLoader.load(IWebSocketService.class))
 		            .forEach(a -> a.onOpen(session, this));
+		log.config("Opened web socket session -" + session.getId());
 	}
 
 	public static void addToGroup(String groupName, Session session)
@@ -123,7 +124,7 @@ public class GuicedWebSocket
 		GuiceContext.instance()
 		            .getLoader(IWebSocketService.class, ServiceLoader.load(IWebSocketService.class))
 		            .forEach(a -> a.onClose(session, this));
-		log.config("Removed web socket session -" + session);
+		log.config("Removed web socket session -" + session.getId());
 	}
 
 	public static void remove(Session session)
