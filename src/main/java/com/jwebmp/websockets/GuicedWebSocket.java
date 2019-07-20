@@ -193,12 +193,22 @@ public class GuicedWebSocket
 		}
 	}
 
+	/**
+	 * A map of HttpSession ID's to WebSocket Sessions
+	 * @return
+	 */
 	public static Map<String, Session> getWebSocketSessionBindings()
 	{
 		return webSocketSessionBindings;
 	}
 
 
+	/**
+	 * Broadcast a given message to the web socket
+	 *
+	 * @param groupName The broadcast group to send to
+	 * @param message The message to send
+	 */
 	public static void broadcastMessage(String groupName, String message)
 	{
 		getGroup(groupName)
