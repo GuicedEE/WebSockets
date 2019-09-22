@@ -21,52 +21,52 @@
             <groupId>com.jwebmp.guicedee</groupId>
             <artifactId>guiced-injection</artifactId>
             <type>jar</type>
-        </dependency>
+            </dependency>
 
         <dependency>
             <groupId>com.jwebmp.guicedee</groupId>
             <artifactId>guiced-log-master</artifactId>
             <type>jar</type>
-        </dependency>
+            </dependency>
 
         <dependency>
             <groupId>com.jwebmp.guicedee.servlets</groupId>
             <artifactId>guiced-servlets</artifactId>
             <type>jar</type>
-        </dependency>
+            </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <type>jar</type>
-        </dependency>
+            </dependency>
 
         <dependency>
-            <groupId>com.jwebmp.thirdparty</groupId>
+            <groupId>com.jwebmp.jpms.thirdparty</groupId>
             <artifactId>jakarta.websocket-api</artifactId>
             <type>jar</type>
-        </dependency>
+            </dependency>
 
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-        </dependency>
+            <artifactId>junit-jupiter-api</artifactId><type>jar</type>
+            </dependency>
 
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-        </dependency>
+            <artifactId>hamcrest-all</artifactId><type>jar</type>
+            </dependency>
 
         <dependency>
             <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-        </dependency>
+            <artifactId>assertj-core</artifactId><type>jar</type>
+            </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-        </dependency>
+            <artifactId>mockito-core</artifactId><type>jar</type>
+            </dependency>
     </dependencies>
     <scm>
         <url>https://github.com/GedMarc/LogMaster.git</url>
