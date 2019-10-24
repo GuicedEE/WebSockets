@@ -1,8 +1,8 @@
-package com.jwebmp.websockets;
+package com.guicedee.guicedservlets.websockets;
 
-import com.jwebmp.guicedinjection.GuiceContext;
-import com.jwebmp.guicedinjection.interfaces.IGuicePreStartup;
-import com.jwebmp.websockets.services.IWebSocketPreConfiguration;
+import com.guicedee.guicedinjection.GuiceContext;
+import com.guicedee.guicedinjection.interfaces.IGuicePreStartup;
+import com.guicedee.guicedservlets.websockets.services.IWebSocketPreConfiguration;
 
 import java.util.ServiceLoader;
 import java.util.Set;

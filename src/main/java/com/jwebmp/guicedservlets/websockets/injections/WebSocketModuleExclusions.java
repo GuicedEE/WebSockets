@@ -1,7 +1,7 @@
-package com.jwebmp.websockets.injections;
+package com.guicedee.guicedservlets.websockets.injections;
 
-import com.jwebmp.guicedinjection.interfaces.IGuiceScanJarExclusions;
-import com.jwebmp.guicedinjection.interfaces.IGuiceScanModuleExclusions;
+import com.guicedee.guicedinjection.interfaces.IGuiceScanJarExclusions;
+import com.guicedee.guicedinjection.interfaces.IGuiceScanModuleExclusions;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -27,7 +27,7 @@ public class WebSocketModuleExclusions
 	public @NotNull Set<String> excludeModules()
 	{
 		Set<String> strings = new HashSet<>();
-		strings.add("com.jwebmp.websockets");
+		strings.add("com.guicedee.jpms.websockets");
 
 		strings.add("org.apache.commons.io");
 		strings.add("org.apache.commons.lang3");

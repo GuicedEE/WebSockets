@@ -1,4 +1,4 @@
-package com.jwebmp.websockets.services;
+package com.guicedee.guicedservlets.websockets.services;
 import javax.servlet.http.HttpSession;
 
 /**

@@ -1,7 +1,7 @@
-package com.jwebmp.websockets.services;
+package com.guicedee.guicedservlets.websockets.services;
 
-import com.jwebmp.guicedinjection.interfaces.IDefaultService;
-import com.jwebmp.websockets.options.WebSocketMessageReceiver;
+import com.guicedee.guicedinjection.interfaces.IDefaultService;
+import com.guicedee.guicedservlets.websockets.options.WebSocketMessageReceiver;
 
 import java.util.Set;
 

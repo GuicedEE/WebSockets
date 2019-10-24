@@ -1,7 +1,7 @@
-package com.jwebmp.websockets.services;
+package com.guicedee.guicedservlets.websockets.services;
 
-import com.jwebmp.guicedinjection.interfaces.IDefaultService;
-import com.jwebmp.guicedinjection.interfaces.IServiceEnablement;
+import com.guicedee.guicedinjection.interfaces.IDefaultService;
+import com.guicedee.guicedinjection.interfaces.IServiceEnablement;
 
 /**
  * A service for JWebMPWebSockets to configure app servers

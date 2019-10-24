@@ -1,12 +1,12 @@
-package com.jwebmp.websockets;
+package com.guicedee.guicedservlets.websockets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jwebmp.guicedinjection.GuiceContext;
-import com.jwebmp.logger.LogFactory;
-import com.jwebmp.websockets.options.WebSocketMessageReceiver;
-import com.jwebmp.websockets.services.IWebSocketMessageReceiver;
-import com.jwebmp.websockets.services.IWebSocketService;
-import com.jwebmp.websockets.services.IWebSocketSessionProvider;
+import com.guicedee.guicedinjection.GuiceContext;
+import com.guicedee.guicedservlets.websockets.options.WebSocketMessageReceiver;
+import com.guicedee.guicedservlets.websockets.services.IWebSocketSessionProvider;
+import com.guicedee.logger.LogFactory;
+import com.guicedee.guicedservlets.websockets.services.IWebSocketMessageReceiver;
+import com.guicedee.guicedservlets.websockets.services.IWebSocketService;
 
 import javax.servlet.http.HttpSession;
 import javax.websocket.*;
@@ -90,7 +90,7 @@ public class GuicedWebSocket
 	public static HttpSession getLinkedSession(String id)
 	{
 		for (IWebSocketSessionProvider sessionProvider : GuiceContext.instance()
-		                                                             .getLoader(IWebSocketSessionProvider.class, ServiceLoader.load(IWebSocketSessionProvider.class)))
+																	 .getLoader(IWebSocketSessionProvider.class, ServiceLoader.load(IWebSocketSessionProvider.class)))
 		{
 			HttpSession session = sessionProvider.getSession(id);
 			if (session != null)
@@ -165,7 +165,7 @@ public class GuicedWebSocket
 		try
 		{
 			WebSocketMessageReceiver<?> messageReceived = GuiceContext.get(ObjectMapper.class)
-			                                                          .readValue(message, WebSocketMessageReceiver.class);
+																	  .readValue(message, WebSocketMessageReceiver.class);
 			if (messageReceived.getData()
 			                   .get("sessionid") != null)
 			{
