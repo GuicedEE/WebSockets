@@ -27,7 +27,7 @@ public class WebSocketModuleExclusions
 	public @NotNull Set<String> excludeModules()
 	{
 		Set<String> strings = new HashSet<>();
-		strings.add("com.guicedee.jpms.websockets");
+		strings.add("com.guicedee.websockets");
 
 		strings.add("org.apache.commons.io");
 		strings.add("org.apache.commons.lang3");
