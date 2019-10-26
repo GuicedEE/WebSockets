@@ -1,19 +1,9 @@
-import com.guicedee.guicedinjection.interfaces.IGuicePreStartup;
-import com.guicedee.guicedinjection.interfaces.IGuiceScanJarExclusions;
-import com.guicedee.guicedinjection.interfaces.IGuiceScanModuleExclusions;
-import com.guicedee.guicedservlets.websockets.WebSocketsConfiguration;
-import com.guicedee.guicedservlets.websockets.injections.WebSocketModuleExclusions;
-import com.guicedee.guicedservlets.websockets.services.IWebSocketMessageReceiver;
-import com.guicedee.guicedservlets.websockets.services.IWebSocketPreConfiguration;
-import com.guicedee.guicedservlets.websockets.services.IWebSocketService;
-import com.guicedee.guicedservlets.websockets.services.IWebSocketSessionProvider;
-
 module com.guicedee.guicedservlets.websockets {
 
-	uses IWebSocketPreConfiguration;
-	uses IWebSocketSessionProvider;
-	uses IWebSocketService;
-	uses IWebSocketMessageReceiver;
+	uses com.guicedee.guicedservlets.websockets.services.IWebSocketPreConfiguration;
+	uses com.guicedee.guicedservlets.websockets.services.IWebSocketSessionProvider;
+	uses com.guicedee.guicedservlets.websockets.services.IWebSocketService;
+	uses com.guicedee.guicedservlets.websockets.services.IWebSocketMessageReceiver;
 
 	requires javax.websocket.api;
 	requires java.logging;
@@ -35,9 +25,9 @@ module com.guicedee.guicedservlets.websockets {
 
 	exports com.guicedee.guicedservlets.websockets.injections to com.guicedee.guicedinjection, com.google.guice;
 
-	provides IGuicePreStartup with WebSocketsConfiguration;
-	provides IGuiceScanModuleExclusions with WebSocketModuleExclusions;
-	provides IGuiceScanJarExclusions with WebSocketModuleExclusions;
+	provides com.guicedee.guicedinjection.interfaces.IGuicePreStartup with com.guicedee.guicedservlets.websockets.WebSocketsConfiguration;
+	provides com.guicedee.guicedinjection.interfaces.IGuiceScanModuleExclusions with com.guicedee.guicedservlets.websockets.injections.WebSocketModuleExclusions;
+	provides com.guicedee.guicedinjection.interfaces.IGuiceScanJarExclusions with com.guicedee.guicedservlets.websockets.injections.WebSocketModuleExclusions;
 
 	opens com.guicedee.guicedservlets.websockets;
 	opens com.guicedee.guicedservlets.websockets.services;

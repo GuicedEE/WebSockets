@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-//import com.guicedee.jpms.core.htmlbuilder.javascript.JavaScriptPart;
+//import com.guicedee.core.htmlbuilder.javascript.JavaScriptPart;
 
 import java.util.HashMap;
 import java.util.Map;
