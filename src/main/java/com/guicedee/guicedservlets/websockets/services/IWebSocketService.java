@@ -7,8 +7,8 @@ import com.guicedee.guicedservlets.websockets.options.WebSocketMessageReceiver;
 
 import javax.websocket.Session;
 
-public interface IWebSocketService<J extends IWebSocketService<J>>
-		extends IDefaultService<J>, IServiceEnablement<J>
+public interface IWebSocketService
+		extends IDefaultService<IWebSocketService>, IServiceEnablement<IWebSocketService>
 {
 	void onOpen(Session session, GuicedWebSocket socket);
 
