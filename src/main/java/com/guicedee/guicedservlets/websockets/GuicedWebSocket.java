@@ -90,7 +90,7 @@ public class GuicedWebSocket
 	public static HttpSession getLinkedSession(String id)
 	{
 		for (IWebSocketSessionProvider sessionProvider : GuiceContext.instance()
-																	 .getLoader(IWebSocketSessionProvider.class, ServiceLoader.load(IWebSocketSessionProvider.class)))
+		                                                             .getLoader(IWebSocketSessionProvider.class, ServiceLoader.load(IWebSocketSessionProvider.class)))
 		{
 			HttpSession session = sessionProvider.getSession(id);
 			if (session != null)
@@ -165,7 +165,7 @@ public class GuicedWebSocket
 		try
 		{
 			WebSocketMessageReceiver<?> messageReceived = GuiceContext.get(ObjectMapper.class)
-																	  .readValue(message, WebSocketMessageReceiver.class);
+			                                                          .readValue(message, WebSocketMessageReceiver.class);
 			if (messageReceived.getData()
 			                   .get("sessionid") != null)
 			{
@@ -184,7 +184,11 @@ public class GuicedWebSocket
 			                                                              .getLoader(IWebSocketMessageReceiver.class, ServiceLoader.load(IWebSocketMessageReceiver.class));
 			for (IWebSocketMessageReceiver messageReceiver : messageReceivers)
 			{
-				messageReceiver.receiveMessage(messageReceived);
+				if (messageReceiver.messageNames()
+				                   .contains(messageReceived.getAction()))
+				{
+					messageReceiver.receiveMessage(messageReceived);
+				}
 			}
 		}
 		catch (Exception e)
@@ -195,6 +199,7 @@ public class GuicedWebSocket
 
 	/**
 	 * A map of HttpSession ID's to WebSocket Sessions
+	 *
 	 * @return
 	 */
 	public static Map<String, Session> getWebSocketSessionBindings()
@@ -202,12 +207,13 @@ public class GuicedWebSocket
 		return webSocketSessionBindings;
 	}
 
-
 	/**
 	 * Broadcast a given message to the web socket
 	 *
-	 * @param groupName The broadcast group to send to
-	 * @param message The message to send
+	 * @param groupName
+	 * 		The broadcast group to send to
+	 * @param message
+	 * 		The message to send
 	 */
 	public static void broadcastMessage(String groupName, String message)
 	{
