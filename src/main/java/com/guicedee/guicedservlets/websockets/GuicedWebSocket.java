@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @ServerEndpoint("/")
+@com.google.inject.Singleton
 public class GuicedWebSocket
 {
 	@SuppressWarnings("WeakerAccess")
@@ -44,7 +45,7 @@ public class GuicedWebSocket
 				}
 				messageListeners.get(messageName)
 				                .add(messageReceiver);
-				log.log(Level.CONFIG, "Registered new IWebSocketReciever [" + messageReceiver.getClass()
+				log.log(Level.FINE, "Registered new IWebSocketReciever [" + messageReceiver.getClass()
 				                                                                             .getCanonicalName() + "]");
 			}
 		}
@@ -108,7 +109,7 @@ public class GuicedWebSocket
 		GuiceContext.instance()
 		            .getLoader(IWebSocketService.class, ServiceLoader.load(IWebSocketService.class))
 		            .forEach(a -> a.onOpen(session, this));
-		log.config("Opened web socket session -" + session.getId());
+		log.fine("Opened web socket session -" + session.getId());
 	}
 
 	public static void addToGroup(String groupName, Session session)
@@ -124,7 +125,7 @@ public class GuicedWebSocket
 		GuiceContext.instance()
 		            .getLoader(IWebSocketService.class, ServiceLoader.load(IWebSocketService.class))
 		            .forEach(a -> a.onClose(session, this));
-		log.config("Removed web socket session -" + session.getId());
+		log.fine("Removed web socket session -" + session.getId());
 	}
 
 	public static void remove(Session session)

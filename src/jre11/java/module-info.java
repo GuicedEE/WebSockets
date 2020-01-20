@@ -8,6 +8,7 @@ module com.guicedee.guicedservlets.websockets {
 	requires javax.websocket.api;
 	requires java.logging;
 
+	requires com.google.guice;
 
 	requires com.guicedee.logmaster;
 	requires com.guicedee.guicedinjection;
