@@ -27,8 +27,6 @@ module com.guicedee.guicedservlets.websockets {
 	exports com.guicedee.guicedservlets.websockets.injections to com.guicedee.guicedinjection, com.google.guice;
 
 	provides com.guicedee.guicedinjection.interfaces.IGuicePreStartup with com.guicedee.guicedservlets.websockets.WebSocketsConfiguration;
-	provides com.guicedee.guicedinjection.interfaces.IGuiceScanModuleExclusions with com.guicedee.guicedservlets.websockets.injections.WebSocketModuleExclusions;
-	provides com.guicedee.guicedinjection.interfaces.IGuiceScanJarExclusions with com.guicedee.guicedservlets.websockets.injections.WebSocketModuleExclusions;
 
 	opens com.guicedee.guicedservlets.websockets;
 	opens com.guicedee.guicedservlets.websockets.services;
