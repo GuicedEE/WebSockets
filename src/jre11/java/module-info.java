@@ -5,20 +5,13 @@ module com.guicedee.guicedservlets.websockets {
 	uses com.guicedee.guicedservlets.websockets.services.IWebSocketService;
 	uses com.guicedee.guicedservlets.websockets.services.IWebSocketMessageReceiver;
 
+	requires transitive com.guicedee.guicedservlets;
+
 	requires javax.websocket.api;
 	requires java.logging;
 
-	requires com.google.guice;
-
-	requires com.guicedee.logmaster;
-	requires com.guicedee.guicedinjection;
-
 	requires com.fasterxml.jackson.annotation;
-
-	requires javax.servlet.api;
-
-	requires java.validation;
-	requires com.fasterxml.jackson.databind;
+	requires transitive java.validation;
 
 	exports com.guicedee.guicedservlets.websockets;
 	exports com.guicedee.guicedservlets.websockets.options;
