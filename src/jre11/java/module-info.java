@@ -8,10 +8,6 @@ module com.guicedee.guicedservlets.websockets {
 	requires transitive com.guicedee.guicedservlets;
 
 	requires javax.websocket.api;
-	requires java.logging;
-
-	requires com.fasterxml.jackson.annotation;
-	requires transitive java.validation;
 
 	exports com.guicedee.guicedservlets.websockets;
 	exports com.guicedee.guicedservlets.websockets.options;
