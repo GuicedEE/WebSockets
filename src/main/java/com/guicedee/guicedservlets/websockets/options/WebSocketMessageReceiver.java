@@ -12,13 +12,13 @@ import java.util.Map;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.*;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.*;
 
+@SuppressWarnings("unused")
 @JsonAutoDetect(fieldVisibility = ANY,
 		getterVisibility = NONE,
 		setterVisibility = NONE)
 @JsonInclude(NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WebSocketMessageReceiver<J extends WebSocketMessageReceiver<J>>
-		//extends JavaScriptPart<J>
 {
 	private String action;
 	private String broadcastGroup;

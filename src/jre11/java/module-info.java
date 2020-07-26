@@ -13,8 +13,6 @@ module com.guicedee.guicedservlets.websockets {
 	exports com.guicedee.guicedservlets.websockets.options;
 	exports com.guicedee.guicedservlets.websockets.services;
 
-	exports com.guicedee.guicedservlets.websockets.injections to com.guicedee.guicedinjection, com.google.guice;
-
 	provides com.guicedee.guicedinjection.interfaces.IGuicePreStartup with com.guicedee.guicedservlets.websockets.WebSocketsConfiguration;
 
 	opens com.guicedee.guicedservlets.websockets;

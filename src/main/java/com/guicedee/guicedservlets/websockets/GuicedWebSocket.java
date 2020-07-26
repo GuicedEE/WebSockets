@@ -17,6 +17,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@SuppressWarnings("unused")
 @ServerEndpoint("/")
 @com.google.inject.Singleton
 public class GuicedWebSocket
@@ -24,10 +25,10 @@ public class GuicedWebSocket
 	@SuppressWarnings("WeakerAccess")
 	public static final String EveryoneGroup = "Everyone";
 
-	private static final Logger log = LogFactory.getLog("JWebMPWebSocket");
+	private static final Logger log = LogFactory.getLog("GuicedEEWebSocket");
 
-	private static final Map<String, Set<Session>> groupedSessions = new ConcurrentHashMap<>(5, 2, 1);
-	private static final Map<String, Session> webSocketSessionBindings = new ConcurrentHashMap<>(5, 2, 1);
+	private static final Map<String, Set<Session>> groupedSessions = new ConcurrentHashMap<>();
+	private static final Map<String, Session> webSocketSessionBindings = new ConcurrentHashMap<>();
 	private static final Map<String, List<IWebSocketMessageReceiver>> messageListeners = new ConcurrentHashMap<>();
 
 	public GuicedWebSocket()
@@ -45,7 +46,7 @@ public class GuicedWebSocket
 				}
 				messageListeners.get(messageName)
 				                .add(messageReceiver);
-				log.log(Level.FINE, "Registered new IWebSocketReciever [" + messageReceiver.getClass()
+				log.log(Level.FINE, "Registered new IWebSocketReceiver [" + messageReceiver.getClass()
 				                                                                             .getCanonicalName() + "]");
 			}
 		}
@@ -219,8 +220,7 @@ public class GuicedWebSocket
 	public static void broadcastMessage(String groupName, String message)
 	{
 		getGroup(groupName)
-				.forEach(a ->
-						         a.getAsyncRemote()
+				.forEach(a -> a.getAsyncRemote()
 						          .sendText(message));
 	}
 

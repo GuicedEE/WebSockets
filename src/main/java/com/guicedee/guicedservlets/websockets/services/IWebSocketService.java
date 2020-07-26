@@ -14,7 +14,7 @@ public interface IWebSocketService
 
 	void onClose(Session session, GuicedWebSocket socket);
 
-	void onMessage(String message, Session session, WebSocketMessageReceiver messageReceiver, GuicedWebSocket socket);
+	void onMessage(String message, Session session, WebSocketMessageReceiver<?> messageReceiver, GuicedWebSocket socket);
 
 	void onError(Throwable t, GuicedWebSocket socket);
 }
