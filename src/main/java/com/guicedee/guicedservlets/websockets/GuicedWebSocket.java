@@ -8,9 +8,9 @@ import com.guicedee.logger.LogFactory;
 import com.guicedee.guicedservlets.websockets.services.IWebSocketMessageReceiver;
 import com.guicedee.guicedservlets.websockets.services.IWebSocketService;
 
-import javax.servlet.http.HttpSession;
-import javax.websocket.*;
-import javax.websocket.server.ServerEndpoint;
+import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.*;
+import jakarta.websocket.server.ServerEndpoint;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;

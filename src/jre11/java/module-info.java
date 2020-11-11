@@ -7,7 +7,7 @@ module com.guicedee.guicedservlets.websockets {
 
 	requires transitive com.guicedee.guicedservlets;
 
-	requires javax.websocket.api;
+	requires jakarta.websocket.api;
 
 	exports com.guicedee.guicedservlets.websockets;
 	exports com.guicedee.guicedservlets.websockets.options;

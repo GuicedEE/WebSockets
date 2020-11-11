@@ -5,7 +5,7 @@ import com.guicedee.guicedinjection.interfaces.IDefaultService;
 import com.guicedee.guicedinjection.interfaces.IServiceEnablement;
 import com.guicedee.guicedservlets.websockets.options.WebSocketMessageReceiver;
 
-import javax.websocket.Session;
+import jakarta.websocket.Session;
 
 public interface IWebSocketService
 		extends IDefaultService<IWebSocketService>, IServiceEnablement<IWebSocketService>
