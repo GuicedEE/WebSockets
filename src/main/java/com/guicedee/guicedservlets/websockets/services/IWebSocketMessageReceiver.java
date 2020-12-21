@@ -27,5 +27,5 @@ public interface IWebSocketMessageReceiver
 	 * @throws java.lang.SecurityException
 	 * 		if any consumer decides the connection is not valid
 	 */
-	void receiveMessage(WebSocketMessageReceiver message) throws SecurityException;
+	void receiveMessage(WebSocketMessageReceiver<?> message) throws SecurityException;
 }
