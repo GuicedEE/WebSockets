@@ -32,6 +32,8 @@ public class GuicedWebSocket
 	private static final Map<String, Session> webSocketSessionBindings = new ConcurrentHashMap<>();
 	private static final Map<String, Set<Class<? extends IWebSocketMessageReceiver>>> messageListeners = new HashMap<>();
 	
+	private static final Map<Session, Map<String, String>> webSocketProperties = new ConcurrentHashMap<>();
+	
 	static
 	{
 		Set<IWebSocketMessageReceiver> messageReceivers = GuiceContext.instance()
@@ -70,8 +72,8 @@ public class GuicedWebSocket
 	public static void remove(String id)
 	{
 		groupedSessions.forEach((key, value) ->
-				                        value.removeIf(a -> a.getId()
-				                                             .equals(id)));
+				value.removeIf(a -> a.getId()
+				                     .equals(id)));
 		
 		for (Iterator<Map.Entry<String, Session>> iterator = webSocketSessionBindings.entrySet()
 		                                                                             .iterator(); iterator.hasNext(); )
@@ -89,6 +91,7 @@ public class GuicedWebSocket
 	 * Returns a session if valid that is linked to this session
 	 *
 	 * @param id
+	 *
 	 * @return
 	 */
 	public static HttpSession getLinkedSession(String id)
@@ -159,6 +162,19 @@ public class GuicedWebSocket
 			if (value.equals(session))
 			{
 				iterator.remove();
+				break;
+			}
+		}
+		for (Iterator<Map.Entry<Session, Map<String, String>>> iterator = webSocketProperties.entrySet()
+		                                                                                     .iterator(); iterator.hasNext(); )
+		{
+			Map.Entry<Session, Map<String, String>> sessionMapEntry = iterator.next();
+			if (sessionMapEntry.getKey()
+			                   .getId()
+			                   .equals(session.getId()))
+			{
+				iterator.remove();
+				break;
 			}
 		}
 	}
@@ -171,6 +187,7 @@ public class GuicedWebSocket
 			WebSocketMessageReceiver<?> messageReceived = GuiceContext.get(ObjectMapper.class)
 			                                                          .readValue(message, WebSocketMessageReceiver.class);
 			messageReceived.setBroadcastGroup(session.getId());
+			messageReceived.setSession(session);
 			GuicedWebSocket.addToGroup(session.getId(), session);
 			log.log(Level.FINER, "Web Socket Message Received - " + session.getId() + " Message=" + messageReceived.toString());
 			GuiceContext.instance()
@@ -220,6 +237,49 @@ public class GuicedWebSocket
 				e.printStackTrace();
 			}
 		});
+	}
+	
+	/**
+	 * Associates keys and values to a web socket session,
+	 * mostly used by security authenticators to grant access to their information
+	 *
+	 * @param session
+	 * @param key
+	 * @param value
+	 */
+	public static void addWebsocketProperty(Session session, String key, String value)
+	{
+		getPropertyMap(session)
+				.put(key, value);
+	}
+	
+	/**
+	 * removes a property
+	 * @param session
+	 * @param key
+	 * @param value
+	 */
+	public static void removeWebsocketProperty(Session session, String key, String value)
+	{
+		getPropertyMap(session)
+				.remove(key);
+	}
+	
+	public static boolean hasProperty(Session session, String key)
+	{
+		return getPropertyMap(session).containsKey(key);
+	}
+	
+	public static Map<String, String> getPropertyMap(Session session)
+	{
+		if (!webSocketProperties.containsKey(session))
+		{
+			if (!webSocketProperties.containsKey(session))
+			{
+				webSocketProperties.put(session, new ConcurrentHashMap<>());
+			}
+		}
+		return webSocketProperties.get(session);
 	}
 	
 	@OnError

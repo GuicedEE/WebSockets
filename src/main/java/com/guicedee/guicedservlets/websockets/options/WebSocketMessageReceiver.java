@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.websocket.Session;
 //import com.guicedee.core.htmlbuilder.javascript.JavaScriptPart;
 
 import java.util.HashMap;
@@ -23,6 +24,7 @@ public class WebSocketMessageReceiver<J extends WebSocketMessageReceiver<J>>
 	private String action;
 	private String broadcastGroup;
 	private Map<String, String> data = new HashMap<>();
+	private Session session;
 
 	public WebSocketMessageReceiver()
 	{
@@ -69,7 +71,18 @@ public class WebSocketMessageReceiver<J extends WebSocketMessageReceiver<J>>
 		this.broadcastGroup = broadcastGroup;
 		return this;
 	}
-
+	
+	public Session getSession()
+	{
+		return session;
+	}
+	
+	public WebSocketMessageReceiver<J> setSession(Session session)
+	{
+		this.session = session;
+		return this;
+	}
+	
 	@JsonAnySetter
 	public void add(String key, String value)
 	{
