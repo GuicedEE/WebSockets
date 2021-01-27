@@ -229,14 +229,36 @@ public class GuicedWebSocket
 		getGroup(groupName).forEach(session -> {
 			try
 			{
-				session.getBasicRemote()
-				       .sendText(message);
+				if(session.isOpen())
+				{
+					session.getBasicRemote()
+					       .sendText(message);
+				}
 			}
 			catch (IOException e)
 			{
 				e.printStackTrace();
 			}
 		});
+		List<Session> sessionsToRemove = new ArrayList<>();
+		for (Session session : getGroup(groupName))
+		{
+			if (!session.isOpen())
+			{
+				sessionsToRemove.add(session);
+			}
+		}
+		for (Session session : sessionsToRemove)
+		{
+			try
+			{
+				remove(session);
+			}catch (Throwable t)
+			{
+				//blind catch
+			}
+		}
+		
 	}
 	
 	/**
