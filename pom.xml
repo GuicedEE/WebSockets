@@ -10,7 +10,7 @@
     <groupId>com.guicedee.servlets</groupId>
     <artifactId>guiced-websockets</artifactId>
     <packaging>jar</packaging>
-
+    <version>0.0.0_0-SNAPSHOT</version>
     <name>Guiced WebSockets</name>
     <description>Provides a WebSocket implementation using JSR356 for Guiced JPMS
     </description>
