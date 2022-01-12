@@ -1,6 +1,7 @@
 package com.guicedee.guicedservlets.websockets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.*;
 import com.guicedee.guicedinjection.GuiceContext;
 import com.guicedee.guicedinjection.interfaces.IDefaultService;
 import com.guicedee.guicedservlets.websockets.options.WebSocketMessageReceiver;
@@ -221,6 +222,24 @@ public class GuicedWebSocket
 		return webSocketSessionBindings;
 	}
 	
+	
+	private static final Map<String, EvictingQueue<String>> duplicateRemovalQueue = new HashMap<>();
+	
+	public static EvictingQueue<String> getDuplicateQueue(String groupName){
+		if(duplicateRemovalQueue.containsKey(groupName))
+		{
+			return duplicateRemovalQueue.get(groupName);
+		}
+		EvictingQueue<String> q = com.google.common.collect.EvictingQueue.create(6);
+		duplicateRemovalQueue.put(groupName,q);
+		return q;
+	}
+	
+	static void addToQueue(String groupName, String message)
+	{
+		getDuplicateQueue(groupName).add(message);
+	}
+	
 	/**
 	 * Broadcast a given message to the web socket
 	 *
@@ -234,8 +253,13 @@ public class GuicedWebSocket
 			{
 				if (session.isOpen())
 				{
-					session.getAsyncRemote()
-					       .sendText(message);
+					if(!getDuplicateQueue(groupName).contains(message))
+					{
+						session.getAsyncRemote()
+						       .sendText(message);
+					} else {
+						addToQueue(groupName, message);
+					}
 				}
 			}
 			catch (Exception e)
@@ -277,8 +301,13 @@ public class GuicedWebSocket
 			{
 				if (session.isOpen())
 				{
-					session.getBasicRemote()
-					       .sendText(message);
+					if(!getDuplicateQueue(groupName).contains(message))
+					{
+						session.getBasicRemote()
+						       .sendText(message);
+					} else {
+						addToQueue(groupName, message);
+					}
 				}
 			}
 			catch (Exception e)
