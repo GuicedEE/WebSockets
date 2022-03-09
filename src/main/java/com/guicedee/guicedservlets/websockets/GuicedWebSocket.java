@@ -1,21 +1,19 @@
 package com.guicedee.guicedservlets.websockets;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
 import com.google.common.collect.*;
-import com.guicedee.guicedinjection.GuiceContext;
-import com.guicedee.guicedinjection.interfaces.IDefaultService;
-import com.guicedee.guicedservlets.websockets.options.WebSocketMessageReceiver;
+import com.guicedee.guicedinjection.*;
+import com.guicedee.guicedinjection.interfaces.*;
+import com.guicedee.guicedservlets.websockets.options.*;
 import com.guicedee.guicedservlets.websockets.services.*;
-import com.guicedee.logger.LogFactory;
-import jakarta.servlet.http.HttpSession;
+import com.guicedee.logger.*;
+import jakarta.servlet.http.*;
 import jakarta.websocket.*;
-import jakarta.websocket.server.ServerEndpoint;
+import jakarta.websocket.server.*;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.*;
+import java.util.logging.*;
 
 @SuppressWarnings("unused")
 @ServerEndpoint("/")
@@ -188,7 +186,8 @@ public class GuicedWebSocket
 			GuicedWebSocket.addToGroup(session.getId(), session);
 			log.log(Level.FINER, "Web Socket Message Received - " + session.getId() + " Message=" + messageReceived.toString());
 			Set<IWebSocketService> iWebSocketServices = IDefaultService.loaderToSet(ServiceLoader.load(IWebSocketService.class));
-			iWebSocketServices.forEach(a -> a.onMessage(message, session, messageReceived, this));
+			String finalMessage = message;
+			iWebSocketServices.forEach(a -> a.onMessage(finalMessage, session, messageReceived, this));
 			if (messageListeners.containsKey(messageReceived.getAction()))
 			{
 				for (Class<? extends IWebSocketMessageReceiver> iWebSocketMessageReceiver : messageListeners.get(messageReceived.getAction()))
@@ -206,10 +205,6 @@ public class GuicedWebSocket
 		{
 			log.log(Level.SEVERE, "ERROR Message Received - " + session.getId() + " Message=" + message, e);
 		}
-		finally
-		{
-			broadcastMessage(session.getId(), "Ok");
-		}
 	}
 	
 	/**
@@ -225,13 +220,14 @@ public class GuicedWebSocket
 	
 	private static final Map<String, EvictingQueue<String>> duplicateRemovalQueue = new HashMap<>();
 	
-	public static EvictingQueue<String> getDuplicateQueue(String groupName){
-		if(duplicateRemovalQueue.containsKey(groupName))
+	public static EvictingQueue<String> getDuplicateQueue(String groupName)
+	{
+		if (duplicateRemovalQueue.containsKey(groupName))
 		{
 			return duplicateRemovalQueue.get(groupName);
 		}
 		EvictingQueue<String> q = com.google.common.collect.EvictingQueue.create(6);
-		duplicateRemovalQueue.put(groupName,q);
+		duplicateRemovalQueue.put(groupName, q);
 		return q;
 	}
 	
@@ -253,11 +249,13 @@ public class GuicedWebSocket
 			{
 				if (session.isOpen())
 				{
-					if(!getDuplicateQueue(groupName).contains(message))
+					if (!getDuplicateQueue(groupName).contains(message))
 					{
 						session.getAsyncRemote()
 						       .sendText(message);
-					} else {
+					}
+					else
+					{
 						addToQueue(groupName, message);
 					}
 				}
@@ -301,11 +299,13 @@ public class GuicedWebSocket
 			{
 				if (session.isOpen())
 				{
-					if(!getDuplicateQueue(groupName).contains(message))
+					if (!getDuplicateQueue(groupName).contains(message))
 					{
 						session.getBasicRemote()
 						       .sendText(message);
-					} else {
+					}
+					else
+					{
 						addToQueue(groupName, message);
 					}
 				}
