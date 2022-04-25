@@ -32,21 +32,45 @@ public class GuicedWebSocket
 	
 	static
 	{
-		Set<IWebSocketMessageReceiver> messageReceivers = GuiceContext.instance()
-		                                                              .getLoader(IWebSocketMessageReceiver.class, ServiceLoader.load(IWebSocketMessageReceiver.class));
+		Set<IWebSocketMessageReceiver> messageReceivers = loadWebSocketReceivers();
 		for (IWebSocketMessageReceiver messageReceiver : messageReceivers)
 		{
 			Set<String> actions = messageReceiver.messageNames();
 			for (String action : actions)
 			{
-				if (!messageListeners.containsKey(action))
-				{
-					messageListeners.put(action, new HashSet<>());
-				}
-				messageListeners.get(action)
-				                .add(messageReceiver.getClass());
+				addReceiver(messageReceiver, action);
 			}
 		}
+	}
+	
+	private static void addReceiver(IWebSocketMessageReceiver messageReceiver, String action)
+	{
+		if (!messageListeners.containsKey(action))
+		{
+			messageListeners.put(action, new HashSet<>());
+		}
+		messageListeners.get(action)
+		                .add(messageReceiver.getClass());
+	}
+	
+	public static Set<IWebSocketMessageReceiver> loadWebSocketReceivers()
+	{
+		Set<IWebSocketMessageReceiver> messageReceivers = GuiceContext.instance()
+		                                                              .getLoader(IWebSocketMessageReceiver.class, ServiceLoader.load(IWebSocketMessageReceiver.class));
+		return messageReceivers;
+	}
+	
+	public static void addWebSocketMessageReceiver(IWebSocketMessageReceiver receiver)
+	{
+		for (String messageName : receiver.messageNames())
+		{
+			addReceiver(receiver,messageName);
+		}
+	}
+	
+	public static boolean isWebSocketReceiverRegistered(String name)
+	{
+		return messageListeners.containsKey(name);
 	}
 	
 	public GuicedWebSocket()
