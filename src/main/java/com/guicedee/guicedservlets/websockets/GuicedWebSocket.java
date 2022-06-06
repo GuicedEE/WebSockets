@@ -26,6 +26,7 @@ public class GuicedWebSocket
 	
 	private static final Map<String, Set<Session>> groupedSessions = new ConcurrentHashMap<>();
 	private static final Map<String, Session> webSocketSessionBindings = new ConcurrentHashMap<>();
+	private static final Map<String, Session> webSocketIdToSession = new ConcurrentHashMap<>();
 	private static final Map<String, Set<Class<? extends IWebSocketMessageReceiver>>> messageListeners = new HashMap<>();
 	
 	private static final Map<Session, Map<String, String>> webSocketProperties = new ConcurrentHashMap<>();
@@ -41,6 +42,11 @@ public class GuicedWebSocket
 				addReceiver(messageReceiver, action);
 			}
 		}
+	}
+	
+	public static Map<String, Session> getWebSocketIdToSession()
+	{
+		return webSocketIdToSession;
 	}
 	
 	private static void addReceiver(IWebSocketMessageReceiver messageReceiver, String action)
@@ -134,6 +140,7 @@ public class GuicedWebSocket
 		GuiceContext.instance()
 		            .getLoader(IWebSocketService.class, ServiceLoader.load(IWebSocketService.class))
 		            .forEach(a -> a.onOpen(session, this));
+		webSocketIdToSession.put(session.getId(), session);
 		log.fine("Opened web socket session -" + session.getId());
 	}
 	
@@ -155,6 +162,7 @@ public class GuicedWebSocket
 	
 	public static void remove(Session session)
 	{
+		webSocketIdToSession.remove(session.getId());
 		for (Map.Entry<String, Set<Session>> entry : groupedSessions.entrySet())
 		{
 			List<Session> value = new ArrayList<>(entry.getValue());
