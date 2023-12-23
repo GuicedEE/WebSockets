@@ -211,27 +211,26 @@ public class GuicedWebSocket
 	{
 		try
 		{
-			WebSocketMessageReceiver<?> messageReceived = GuiceContext.get(ObjectMapper.class)
-			                                                          .readValue(message, WebSocketMessageReceiver.class);
-			messageReceived.setBroadcastGroup(session.getId());
-			messageReceived.setSession(session);
-			GuicedWebSocket.addToGroup(session.getId(), session);
-			log.log(Level.FINER, "Web Socket Message Received - " + session.getId() + " Message=" + messageReceived.toString());
-			Set<IWebSocketService> iWebSocketServices = IDefaultService.loaderToSet(ServiceLoader.load(IWebSocketService.class));
-			String finalMessage = message;
-			iWebSocketServices.forEach(a -> a.onMessage(finalMessage, session, messageReceived, this));
-			if (messageListeners.containsKey(messageReceived.getAction()))
-			{
-				for (Class<? extends IWebSocketMessageReceiver> iWebSocketMessageReceiver : messageListeners.get(messageReceived.getAction()))
-				{
-					IWebSocketMessageReceiver messageReceiver = GuiceContext.get(iWebSocketMessageReceiver);
-					messageReceiver.receiveMessage(messageReceived);
+			String webSocketSessionId = session.getId();
+			//synchronized (webSocketSessionId) {
+				WebSocketMessageReceiver<?> messageReceived = GuiceContext.get(ObjectMapper.class)
+						.readValue(message, WebSocketMessageReceiver.class);
+				messageReceived.setBroadcastGroup(session.getId());
+				messageReceived.setSession(session);
+				GuicedWebSocket.addToGroup(session.getId(), session);
+			//	log.log(Level.FINER, "Web Socket Message Received - " + session.getId() + " Message=" + messageReceived.toString());
+				Set<IWebSocketService> iWebSocketServices = IDefaultService.loaderToSet(ServiceLoader.load(IWebSocketService.class));
+				String finalMessage = message;
+				iWebSocketServices.forEach(a -> a.onMessage(finalMessage, session, messageReceived, this));
+				if (messageListeners.containsKey(messageReceived.getAction())) {
+					for (Class<? extends IWebSocketMessageReceiver> iWebSocketMessageReceiver : messageListeners.get(messageReceived.getAction())) {
+						IWebSocketMessageReceiver messageReceiver = GuiceContext.get(iWebSocketMessageReceiver);
+						messageReceiver.receiveMessage(messageReceived);
+					}
+				} else {
+					log.warning("No message receiver registered for type - " + messageReceived.getAction());
 				}
-			}
-			else
-			{
-				log.warning("No message receiver registered for type - " + messageReceived.getAction());
-			}
+			//}
 		}
 		catch (Exception e)
 		{
@@ -249,25 +248,7 @@ public class GuicedWebSocket
 		return webSocketSessionBindings;
 	}
 	
-	
-	private static final Map<String, EvictingQueue<String>> duplicateRemovalQueue = new HashMap<>();
-	
-	public static EvictingQueue<String> getDuplicateQueue(String groupName)
-	{
-		if (duplicateRemovalQueue.containsKey(groupName))
-		{
-			return duplicateRemovalQueue.get(groupName);
-		}
-		EvictingQueue<String> q = com.google.common.collect.EvictingQueue.create(6);
-		duplicateRemovalQueue.put(groupName, q);
-		return q;
-	}
-	
-	static void addToQueue(String groupName, String message)
-	{
-		getDuplicateQueue(groupName).add(message);
-	}
-	
+
 	/**
 	 * Broadcast a given message to the web socket
 	 *
@@ -281,15 +262,8 @@ public class GuicedWebSocket
 			{
 				if (session.isOpen())
 				{
-					if (!getDuplicateQueue(groupName).contains(message))
-					{
-						session.getAsyncRemote()
-						       .sendText(message);
-					}
-					else
-					{
-						addToQueue(groupName, message);
-					}
+					session.getAsyncRemote()
+							.sendText(message);
 				}
 			}
 			catch (Exception e)
@@ -297,25 +271,7 @@ public class GuicedWebSocket
 				e.printStackTrace();
 			}
 		});
-		List<Session> sessionsToRemove = new ArrayList<>();
-		for (Session session : getGroup(groupName))
-		{
-			if (!session.isOpen())
-			{
-				sessionsToRemove.add(session);
-			}
-		}
-		for (Session session : sessionsToRemove)
-		{
-			try
-			{
-				remove(session);
-			}
-			catch (Throwable t)
-			{
-				//blind catch
-			}
-		}
+		pruneSessions(groupName);
 	}
 	
 	/**
@@ -331,15 +287,8 @@ public class GuicedWebSocket
 			{
 				if (session.isOpen())
 				{
-					if (!getDuplicateQueue(groupName).contains(message))
-					{
-						session.getBasicRemote()
-						       .sendText(message);
-					}
-					else
-					{
-						addToQueue(groupName, message);
-					}
+					session.getBasicRemote()
+							.sendText(message);
 				}
 			}
 			catch (Exception e)
@@ -347,6 +296,10 @@ public class GuicedWebSocket
 				e.printStackTrace();
 			}
 		});
+		pruneSessions(groupName);
+	}
+
+	private static void pruneSessions(String groupName) {
 		List<Session> sessionsToRemove = new ArrayList<>();
 		for (Session session : getGroup(groupName))
 		{
@@ -367,7 +320,7 @@ public class GuicedWebSocket
 			}
 		}
 	}
-	
+
 	/**
 	 * Associates keys and values to a web socket session,
 	 * mostly used by security authenticators to grant access to their information
