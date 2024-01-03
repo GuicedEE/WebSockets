@@ -1,8 +1,15 @@
+import com.guicedee.guicedservlets.websockets.implementations.GuicedUndertowWebSocketConfiguration;
+import com.guicedee.guicedservlets.websockets.implementations.UndertowWebSocketSessionProvider;
+import com.guicedee.guicedservlets.websockets.services.IWebSocketService;
+import com.guicedee.guicedservlets.websockets.services.IWebSocketSessionProvider;
+
 module com.guicedee.guicedservlets.websockets {
 	
+	requires undertow.websockets.jsr;
+	
 	uses com.guicedee.guicedservlets.websockets.services.IWebSocketPreConfiguration;
-	uses com.guicedee.guicedservlets.websockets.services.IWebSocketSessionProvider;
-	uses com.guicedee.guicedservlets.websockets.services.IWebSocketService;
+	uses IWebSocketSessionProvider;
+	uses IWebSocketService;
 	uses com.guicedee.guicedservlets.websockets.services.IWebSocketMessageReceiver;
 	
 	requires static lombok;
@@ -11,15 +18,13 @@ module com.guicedee.guicedservlets.websockets {
 	
 	requires jakarta.websocket;
 	requires jakarta.websocket.client;
+	requires undertow.core;
+	requires undertow.servlet;
 	
 	exports com.guicedee.guicedservlets.websockets;
-	exports com.guicedee.guicedservlets.websockets.options;
-	exports com.guicedee.guicedservlets.websockets.services;
 	
 	provides com.guicedee.guicedinjection.interfaces.IGuicePreStartup with com.guicedee.guicedservlets.websockets.WebSocketsConfiguration;
+	provides com.guicedee.guicedservlets.websockets.services.IWebSocketPreConfiguration with GuicedUndertowWebSocketConfiguration;
+	provides IWebSocketSessionProvider with UndertowWebSocketSessionProvider;
 	
-	opens com.guicedee.guicedservlets.websockets;
-	opens com.guicedee.guicedservlets.websockets.services;
-	
-	opens com.guicedee.guicedservlets.websockets.options to com.fasterxml.jackson.databind;
 }
