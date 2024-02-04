@@ -15,6 +15,7 @@ module com.guicedee.guicedservlets.websockets {
 	requires static lombok;
 	
 	requires transitive com.guicedee.guicedservlets;
+	requires static com.guicedee.guicedservlets.undertow;
 	
 	requires jakarta.websocket;
 	requires jakarta.websocket.client;
@@ -27,4 +28,5 @@ module com.guicedee.guicedservlets.websockets {
 	provides com.guicedee.guicedservlets.websockets.services.IWebSocketPreConfiguration with GuicedUndertowWebSocketConfiguration;
 	provides IWebSocketSessionProvider with UndertowWebSocketSessionProvider;
 	
+	opens com.guicedee.guicedservlets.websockets to undertow.servlet;
 }

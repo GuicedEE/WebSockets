@@ -71,7 +71,7 @@ public class GuicedUndertowWebSocketConfiguration
 			
 			GuicedUndertowWebSocketConfiguration.log.fine("Registering WebSockets in Undertow - [/wssocket]");
 			GuicedUndertowWebSocketConfiguration.webSocketHandler = manager.start();
-			GuicedUndertowWebSocketConfiguration.log.fine("Completed WebSocket [/wssocket]");
+			GuicedUndertowWebSocketConfiguration.log.config("Completed Default WebSocket Mapping [/wssocket]");
 		}
 		catch (Exception e)
 		{
