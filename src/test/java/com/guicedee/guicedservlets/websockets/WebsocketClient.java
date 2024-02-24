@@ -4,12 +4,16 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.nio.ByteBuffer;
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import com.guicedee.guicedservlets.undertow.GuicedUndertow;
 import org.junit.jupiter.api.Test;
+
+import javax.net.ssl.SSLContext;
 
 public class WebsocketClient
 {
@@ -17,20 +21,21 @@ public class WebsocketClient
 	public void testWebSocketClient() throws Exception
 	{
 		GuicedUndertow.boot("0.0.0.0",8888);
-		
-		
-		HttpClient.newBuilder()
+	
+		CompletableFuture<WebSocket> webSocketCompletableFuture = HttpClient.newBuilder()
 						.build()
 						.newWebSocketBuilder()
+						
 						.header("Origin", "https://web.whatsapp.com")
 						.header("User-Agent", "some user agent")
 						.subprotocols("permessage-deflate", "client_max_window_bits")
-						.buildAsync(URI.create("wss://127.0.0.1:8888/wssocket"), new WebSocket.Listener()
+						.buildAsync(URI.create("ws://127.0.0.1:8888/wssocket"), new WebSocket.Listener()
 						{
 							@Override
 							public void onOpen(WebSocket webSocket)
 							{
 								WebSocket.Listener.super.onOpen(webSocket);
+								webSocket.sendText("tag,irrelevantMessage", true);
 							}
 							
 							@Override
@@ -69,5 +74,9 @@ public class WebsocketClient
 								WebSocket.Listener.super.onError(webSocket, error);
 							}
 						});
+		
+		WebSocket webSocket = webSocketCompletableFuture.get();
+		webSocket.sendText("asdfasdf", true);
+		System.out.println("Done");
 	}
 }

@@ -1,5 +1,7 @@
+import com.guicedee.guicedservlets.undertow.services.UndertowPathHandler;
 import com.guicedee.guicedservlets.websockets.implementations.GuicedUndertowWebSocketConfiguration;
 import com.guicedee.guicedservlets.websockets.implementations.UndertowWebSocketSessionProvider;
+import com.guicedee.guicedservlets.websockets.implementations.WebsocketUndertowPathHandler;
 import com.guicedee.guicedservlets.websockets.services.IWebSocketService;
 import com.guicedee.guicedservlets.websockets.services.IWebSocketSessionProvider;
 
@@ -16,6 +18,7 @@ module com.guicedee.guicedservlets.websockets {
 	
 	requires transitive com.guicedee.guicedservlets;
 	requires static com.guicedee.guicedservlets.undertow;
+	requires static java.net.http;
 	
 	requires jakarta.websocket;
 	requires jakarta.websocket.client;
@@ -27,6 +30,7 @@ module com.guicedee.guicedservlets.websockets {
 	provides com.guicedee.guicedinjection.interfaces.IGuicePreStartup with com.guicedee.guicedservlets.websockets.WebSocketsConfiguration;
 	provides com.guicedee.guicedservlets.websockets.services.IWebSocketPreConfiguration with GuicedUndertowWebSocketConfiguration;
 	provides IWebSocketSessionProvider with UndertowWebSocketSessionProvider;
+	provides UndertowPathHandler with WebsocketUndertowPathHandler;
 	
 	opens com.guicedee.guicedservlets.websockets to undertow.servlet;
 }

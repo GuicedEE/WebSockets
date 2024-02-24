@@ -222,7 +222,7 @@ public class GuicedWebSocket
 							.readValue(message, WebSocketMessageReceiver.class);
 			messageReceived.setBroadcastGroup(session.getId());
 			messageReceived.setWebSocketSessionId(session.getId());
-			
+			messageReceived.setSession(session);
 			GuicedWebSocket.addToGroup(session.getId(), session);
 			//	log.log(Level.FINER, "Web Socket Message Received - " + session.getId() + " Message=" + messageReceived.toString());
 			Set<IWebSocketService> iWebSocketServices = GuiceContext.instance().loaderToSet(ServiceLoader.load(IWebSocketService.class));

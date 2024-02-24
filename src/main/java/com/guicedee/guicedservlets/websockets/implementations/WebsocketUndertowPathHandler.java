@@ -2,16 +2,18 @@ package com.guicedee.guicedservlets.websockets.implementations;
 
 import com.guicedee.guicedservlets.undertow.services.UndertowPathHandler;
 import io.undertow.server.HttpHandler;
+import io.undertow.server.handlers.PathHandler;
 import jakarta.annotation.Nullable;
+
+import java.util.Map;
 
 import static io.undertow.Handlers.path;
 
 public class WebsocketUndertowPathHandler implements UndertowPathHandler<WebsocketUndertowPathHandler>
 {
 	@Override
-	public HttpHandler registerPathHandler(@Nullable HttpHandler incoming)
+	public Map<String, HttpHandler> registerPathHandler()
 	{
-		path().addPrefixPath("/wssocket", GuicedUndertowWebSocketConfiguration.getWebSocketHandler());
-		return incoming;
+		return Map.of("/wssocket", GuicedUndertowWebSocketConfiguration.getWebSocketHandler());
 	}
 }
