@@ -1,7 +1,7 @@
 package com.guicedee.guicedservlets.websockets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.guicedee.guicedinjection.GuiceContext;
+import com.guicedee.client.*;
 import com.guicedee.guicedservlets.websockets.options.WebSocketMessageReceiver;
 import com.guicedee.guicedservlets.websockets.services.IWebSocketMessageReceiver;
 import com.guicedee.guicedservlets.websockets.services.IWebSocketService;
@@ -61,8 +61,9 @@ public class GuicedWebSocket
 	
 	public static Set<IWebSocketMessageReceiver> loadWebSocketReceivers()
 	{
-		Set<IWebSocketMessageReceiver> messageReceivers = GuiceContext.instance()
-						.getLoader(IWebSocketMessageReceiver.class, ServiceLoader.load(IWebSocketMessageReceiver.class));
+		Set<IWebSocketMessageReceiver> messageReceivers = IGuiceContext
+				                                                  .instance()
+				                                                  .getLoader(IWebSocketMessageReceiver.class, ServiceLoader.load(IWebSocketMessageReceiver.class));
 		return messageReceivers;
 	}
 	
@@ -85,7 +86,7 @@ public class GuicedWebSocket
 	
 	public static GuicedWebSocket getInstance()
 	{
-		return GuiceContext.get(GuicedWebSocket.class);
+		return IGuiceContext.get(GuicedWebSocket.class);
 	}
 	
 	public static void removeFromGroup(String groupName, Session session)
@@ -126,7 +127,7 @@ public class GuicedWebSocket
 	 */
 	public static Optional<HttpSession> getLinkedSession(String id)
 	{
-		for (IWebSocketSessionProvider sessionProvider : GuiceContext.instance()
+		for (IWebSocketSessionProvider sessionProvider : IGuiceContext.instance()
 						.getLoader(IWebSocketSessionProvider.class, ServiceLoader.load(IWebSocketSessionProvider.class)))
 		{
 			HttpSession session = sessionProvider.getSession(id);
@@ -142,7 +143,7 @@ public class GuicedWebSocket
 	public void onOpen(Session session)
 	{
 		addToGroup(EveryoneGroup, session);
-		GuiceContext.instance()
+		IGuiceContext.instance()
 						.getLoader(IWebSocketService.class, ServiceLoader.load(IWebSocketService.class))
 						.forEach(a -> a.onOpen(session));
 		webSocketIdToSession.put(session.getId(), session);
@@ -159,7 +160,7 @@ public class GuicedWebSocket
 	public void onClose(Session session)
 	{
 		remove(session);
-		GuiceContext.instance()
+		IGuiceContext.instance()
 						.getLoader(IWebSocketService.class, ServiceLoader.load(IWebSocketService.class))
 						.forEach(a -> a.onClose(session));
 		log.fine("Removed web socket session -" + session.getId());
@@ -218,21 +219,21 @@ public class GuicedWebSocket
 		{
 			String webSocketSessionId = session.getId();
 			//synchronized (webSocketSessionId) {
-			WebSocketMessageReceiver<?> messageReceived = GuiceContext.get(ObjectMapper.class)
+			WebSocketMessageReceiver<?> messageReceived = IGuiceContext.get(ObjectMapper.class)
 							.readValue(message, WebSocketMessageReceiver.class);
 			messageReceived.setBroadcastGroup(session.getId());
 			messageReceived.setWebSocketSessionId(session.getId());
 			messageReceived.setSession(session);
 			GuicedWebSocket.addToGroup(session.getId(), session);
 			//	log.log(Level.FINER, "Web Socket Message Received - " + session.getId() + " Message=" + messageReceived.toString());
-			Set<IWebSocketService> iWebSocketServices = GuiceContext.instance().loaderToSet(ServiceLoader.load(IWebSocketService.class));
+			Set<IWebSocketService> iWebSocketServices = IGuiceContext.loaderToSet(ServiceLoader.load(IWebSocketService.class));
 			String finalMessage = message;
 			iWebSocketServices.forEach(a -> a.onMessage(finalMessage, session, messageReceived));
 			if (messageListeners.containsKey(messageReceived.getAction()))
 			{
 				for (Class<? extends IWebSocketMessageReceiver> iWebSocketMessageReceiver : messageListeners.get(messageReceived.getAction()))
 				{
-					IWebSocketMessageReceiver messageReceiver = GuiceContext.get(iWebSocketMessageReceiver);
+					IWebSocketMessageReceiver messageReceiver = IGuiceContext.get(iWebSocketMessageReceiver);
 					messageReceiver.receiveMessage(messageReceived);
 				}
 			} else
@@ -364,7 +365,7 @@ public class GuicedWebSocket
 	public void onError(Throwable t, Session session)
 	{
 		log.log(Level.SEVERE, "Error occurred in WebSocket", t);
-		GuiceContext.instance()
+		IGuiceContext.instance()
 						.getLoader(IWebSocketService.class, ServiceLoader.load(IWebSocketService.class))
 						.forEach(a -> a.onError(t));
 		remove(session);
