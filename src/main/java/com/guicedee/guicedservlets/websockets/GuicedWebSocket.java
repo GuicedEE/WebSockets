@@ -48,7 +48,7 @@ public class GuicedWebSocket implements IGuicedWebSocket
         }
     }
 
-    private void addReceiver(IWebSocketMessageReceiver messageReceiver, String action)
+    public void addReceiver(IWebSocketMessageReceiver messageReceiver, String action)
     {
         if (!messageListeners.containsKey(action))
         {
