@@ -34,20 +34,6 @@ public class GuicedWebSocket implements IGuicedWebSocket
 
     private final Map<Session, Map<String, String>> webSocketProperties = new ConcurrentHashMap<>();
 
-    static
-    {
-        Set<IWebSocketMessageReceiver> messageReceivers = loadWebSocketReceivers();
-        for (IWebSocketMessageReceiver messageReceiver : messageReceivers)
-        {
-            Set<String> actions = messageReceiver.messageNames();
-            for (String action : actions)
-            {
-                IGuiceContext.get(GuicedWebSocket.class)
-                             .addReceiver(messageReceiver, action);
-            }
-        }
-    }
-
     public void addReceiver(IWebSocketMessageReceiver messageReceiver, String action)
     {
         if (!messageListeners.containsKey(action))
@@ -56,14 +42,6 @@ public class GuicedWebSocket implements IGuicedWebSocket
         }
         messageListeners.get(action)
                         .add(messageReceiver.getClass());
-    }
-
-    public static Set<IWebSocketMessageReceiver> loadWebSocketReceivers()
-    {
-        Set<IWebSocketMessageReceiver> messageReceivers = IGuiceContext
-                .instance()
-                .getLoader(IWebSocketMessageReceiver.class, ServiceLoader.load(IWebSocketMessageReceiver.class));
-        return messageReceivers;
     }
 
     public void addWebSocketMessageReceiver(IWebSocketMessageReceiver receiver)
@@ -262,7 +240,7 @@ public class GuicedWebSocket implements IGuicedWebSocket
      * @param groupName The broadcast group to send to
      * @param message   The message to send
      */
-    public void broadcastMessage(String groupName, String message)
+    public void broadcastMessage(String message)
     {
         getGroup(groupName).forEach(session -> {
             try
