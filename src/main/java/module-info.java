@@ -3,7 +3,7 @@ import com.guicedee.guicedservlets.undertow.services.UndertowPathHandler;
 import com.guicedee.guicedservlets.websockets.implementations.GuicedServletWebSocketsModule;
 import com.guicedee.guicedservlets.websockets.implementations.GuicedUndertowWebSocketConfiguration;
 import com.guicedee.guicedservlets.websockets.implementations.WebsocketUndertowPathHandler;
-module com.guicedee.guicedservlets.websockets {
+module com.guicedee.websockets {
 	
 	requires undertow.websockets.jsr;
 	
