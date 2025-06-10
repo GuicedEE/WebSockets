@@ -5,7 +5,7 @@ import com.guicedee.client.IGuiceContext;
 import com.guicedee.guicedservlets.websockets.options.IGuicedWebSocket;
 import com.guicedee.guicedservlets.websockets.options.WebSocketMessageReceiver;
 import com.guicedee.guicedservlets.websockets.services.IWebSocketMessageReceiver;
-import jakarta.inject.Singleton;
+import import com.google.inject.Singleton;;
 import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
 import lombok.Getter;
